@@ -6,7 +6,7 @@ Author: Steven Hancock.
 """
 
 import numpy as np
-from lvisClass import lvisData
+from lvis_data import lvisData
 from pyproj import Proj, transform
 from scipy.ndimage.filters import gaussian_filter1d 
 
@@ -35,7 +35,7 @@ class lvisGround(lvisData):
         """
         Set a noise threshold
         """
-        threshold = self.meanNoise+threshScale*self.stdevNoise
+        threshold = self.meanNoise + threshScale*self.stdevNoise
         return threshold
 
     def CofG(self):
@@ -45,9 +45,15 @@ class lvisGround(lvisData):
         # allocate space for ground elevation
         self.zG = np.full(self.nWaves, -999.9)  # no data flag for now
 
-        from sys import exit
-        print("CofG function not finished. Use online resources to finish")
-        exit()
+        # allocate space and put no data flags
+        self.zG = np.full((self.nWaves), -999.0)
+
+        # loop over waveforms
+        for i in range(0, self.nWaves):
+            if np.sum(self.denoised[i]) > 0.0:  # avoid empty waveforms (clouds etc)
+              self.zG[i] = np.average(self.z[i], weights=self.denoised[i])
+        print(self.zG.shape)
+        print(self.zG)
         return
 
     def reproject(self, inEPSG, outEPSG):
@@ -85,26 +91,26 @@ class lvisGround(lvisData):
         Denoise waveform data
         """
         # find resolution
-        res = (self.z[0,0] - self.z[0,-1]) / self.nBins    # range resolution
+        res = (self.z[0, 0] - self.z[0, -1]) / self.nBins    # range resolution
 
         # make array for output
         self.denoised = np.full((self.nWaves, self.nBins), 0)
 
         # loop over waves
-        for i in range(0,self.nWaves):
+        for i in range(0, self.nWaves):
             print("Denoising wave", i+1, "of", self.nWaves)
 
             # subtract mean background noise
             self.denoised[i] = self.waves[i] - self.meanNoise[i]
 
             # set all values less than threshold to zero
-            self.denoised[i,self.denoised[i]<threshold[i]] = 0.0
+            self.denoised[i, self.denoised[i] < threshold[i]] = 0.0
 
             # minimum acceptable width
             binList = np.where(self.denoised[i] > 0.0)[0]
             for j in range(0, binList.shape[0]):       # loop over waveforms
                 if (j > 0) & (j < (binList.shape[0] - 1)):    # are we in the middle of the array?
-                    if (binList[j] != binList[j - 1] + 1)|(binList[j] != binList[j + 1] - 1):  # are the bins consecutive?
+                    if (binList[j] != binList[j - 1] + 1) | (binList[j] != binList[j + 1] - 1):  # are the bins consecutive?
                       self.denoised[i, binList[j]] = 0.0   # if not, set to zero
 
             # smooth
