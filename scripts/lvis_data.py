@@ -22,6 +22,7 @@ class lvisData:
         onlyBounds sets "bounds" to the corner of the area of interest.
         """
         # call the file reader and load in to the self
+        self.minX, self.minY, self.maxX, self.maxY = minX, minY, maxX, maxY
         self.readLVIS(filename, minX, minY, maxX, maxY, onlyBounds)
         if setElev:
             self.setElevations()

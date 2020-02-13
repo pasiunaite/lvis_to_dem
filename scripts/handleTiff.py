@@ -14,7 +14,7 @@ from gdal import Warp
 import numpy as np
 
 
-class tiffHandle:
+class tiffHandle():
     """
     Class to handle geotiff files
     """
@@ -25,12 +25,12 @@ class tiffHandle:
         Does nothing as this is only an example
         """
 
-    def writeTiff(self, data, filename="chm.tif", epsg=27700):
+    def writeTiff(self, data, res=10.0, filename="chm.tif", epsg=27700):
         """
         Write a geotiff from a raster layer
         """
         # set geolocation information (note geotiffs count down from top edge in Y)
-        geotransform = (self.minX, self.res, 0, self.maxY, 0, -1*self.res)
+        geotransform = (self.minX, res, 0, self.maxY, 0, -1*self.res)
 
         # load data in to geotiff object
         dst_ds = gdal.GetDriverByName('GTiff').Create(filename, self.nX, self.nY, 1, gdal.GDT_Float32)
