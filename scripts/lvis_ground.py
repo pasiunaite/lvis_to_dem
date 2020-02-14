@@ -5,21 +5,21 @@ Some example functions for processing LVIS data.
 Author: Steven Hancock.
 """
 
+import numpy as np
 from lvis_data import lvisData
 from pyproj import Proj, transform
-from scipy.ndimage.filters import gaussian_filter1d
-
-from osgeo import gdal             # pacage for handling geotiff data
-from osgeo import osr              # pacage for handling projection information
-from gdal import Warp
-import numpy as np
 from matplotlib import pyplot as plt
+from scipy.ndimage.filters import gaussian_filter1d
 
 
 class lvisGround(lvisData):
     """
     LVIS class with extra processing steps
     """
+    def __init__(self, filename, minX=-100000000, maxX=100000000, minY=-1000000000, maxY=100000000,
+                 setElev=False, onlyBounds=False):
+        lvisData.__init__(self, filename, minX=minX, minY=minY, maxX=maxX, maxY=maxY, setElev=setElev,
+                          onlyBounds=onlyBounds)
 
     def estimateGround(self, threshScale=5, statsLen=10, minWidth=3, smooWidth=0.5):
         """
@@ -29,45 +29,29 @@ class lvisGround(lvisData):
         # find noise statistics
         self.findStats(statsLen=statsLen)
         # set threshold
-        threshold = self.setThreshold(threshScale)
+        threshold = self.meanNoise + threshScale * self.stdevNoise
         # remove background
         self.denoise(threshold, minWidth=minWidth, smooWidth=smooWidth)
         # find centre of gravity of remaining signal
         self.CofG()
+        # Remove no data points (-999.0) form lat, long and zG arrays
+        self.lon = self.lon[self.zG != -999.0] #- 180
+        self.lat = self.lat[self.zG != -999.0]
+        self.zG = self.zG[self.zG != -999.0]
         return
-
-    def setThreshold(self, threshScale):
-        """
-        Set a noise threshold
-        """
-        threshold = self.meanNoise + threshScale * self.stdevNoise
-        return threshold
 
     def CofG(self):
         """
         Find centre of gravity of denoised waveforms
         """
-        # allocate space for ground elevation
-        #self.zG = np.full(self.nWaves, -999.9)  # no data flag for now
-
-        # allocate space and put no data flags
-        self.zG = np.full((self.nWaves), -999.0)
+        # allocate space for ground elevation and put no data flags
+        self.zG = np.full(self.nWaves, -999.0)
 
         # loop over waveforms
         for i in range(0, self.nWaves):
             if np.sum(self.denoised[i]) > 0.0:  # avoid empty waveforms (clouds etc)
                 self.zG[i] = np.average(self.z[i], weights=self.denoised[i])
         print(self.zG.shape)
-        print(self.zG)
-        return
-
-    def remove_no_data(self):
-        """
-        The function filters out the no data (-999.0) values out of lat, long and zG arrays
-        """
-        self.lon = self.lon[self.zG != -999.0]
-        self.lat = self.lat[self.zG != -999.0]
-        self.zG = self.zG[self.zG != -999.0]
         return
 
     def reproject(self, inEPSG, outEPSG):
@@ -110,7 +94,7 @@ class lvisGround(lvisData):
         # make array for output
         self.denoised = np.full((self.nWaves, self.nBins), 0)
 
-        print('No of waves: ', self.nWaves)
+        print('No of waves: ', self.nWaves, 'resolution: ', res)
 
         # loop over waves
         for i in range(0, self.nWaves):
@@ -133,41 +117,17 @@ class lvisGround(lvisData):
 
             # smooth
             self.denoised[i] = gaussian_filter1d(self.denoised[i], smooWidth / res)
-        print('self.lon: ', self.lon.shape)
-        print('self.lat: ', self.lat.shape)
         return
 
-    def plot_dem(self):
+    def plot_data_points(self):
         #plt.tripcolor(self.lon, self.lat, self.zG)
         plt.scatter(x=self.lon, y=self.lat, c=self.zG, s=1)
+        plt.gca().invert_xaxis()
         cbar = plt.colorbar()
-        cbar.set_label("elevation (m)", labelpad=1)
+        cbar.set_label("elevation (m)", labelpad=15)
         plt.show()
         return
 
-    def writeTiff(self, res=10.0, filename="../outputs/dem.tif", epsg=3031):
-        """
-        Write a geotiff from a raster layer
-        """
-        # set geolocation information (note geotiffs count down from top edge in Y)
-        geotransform = (self.minX, res, 0, self.maxY, 0, -1*res)
+    def dem(self):
 
-        # determine image size
-        nX = int((self.maxX - self.minX) / res + 1)
-        nY = int((self.maxY - self.minY) / res + 1)
-
-        # load data in to geotiff object
-        dst_ds = gdal.GetDriverByName('GTiff').Create(filename, nX, nY, 1, gdal.GDT_Float32)
-
-        dst_ds.SetGeoTransform(geotransform)    # specify coords
-        srs = osr.SpatialReference()            # establish encoding
-        srs.ImportFromEPSG(epsg)                # WGS84 lat/long
-        dst_ds.SetProjection(srs.ExportToWkt())  # export coords to file
-        dst_ds.GetRasterBand(1).WriteArray(self.zG)  # write image to the raster
-        dst_ds.GetRasterBand(1).SetNoDataValue(-999)  # set no data value
-        dst_ds.FlushCache()                     # write to disk
-        dst_ds = None
-
-        print("Image written to", filename)
         return
-

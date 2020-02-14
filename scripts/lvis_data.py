@@ -23,11 +23,15 @@ class lvisData:
         """
         # call the file reader and load in to the self
         self.minX, self.minY, self.maxX, self.maxY = minX, minY, maxX, maxY
-        self.readLVIS(filename, minX, minY, maxX, maxY, onlyBounds)
-        if setElev:
+        self.lon, self.lat = None, None
+        self.onlyBounds = onlyBounds
+
+        self.data_present = True
+        self.readLVIS(filename)
+        if self.data_present & setElev:
             self.setElevations()
 
-    def readLVIS(self, filename, minX, minY, maxX, maxY, onlyBounds):
+    def readLVIS(self, filename):
         """
         Read LVIS data from file
         """
@@ -45,18 +49,19 @@ class lvisData:
         tempLat = (lat0 + latN) / 2.0
 
         # write out bounds and leave if needed
-        if onlyBounds:
+        if self.onlyBounds:
             self.lon = tempLon
             self.lat = tempLat
             self.bounds = self.dumpBounds()
             return
 
         # determine which are in region of interest
-        useInd = np.where((tempLon >= minX) & (tempLon < maxX) & (tempLat >= minY) & (tempLat < maxY))
+        useInd = np.where((tempLon >= self.minX) & (tempLon < self.maxX) & (tempLat >= self.minY) & (tempLat < self.maxY))
         if len(useInd) > 0:
             useInd = useInd[0]
 
         if len(useInd) == 0:
+            self.data_present = False
             print("No data contained in that region")
             return
 
@@ -68,7 +73,7 @@ class lvisData:
         # load sliced arrays, to save RAM
         self.lfid = np.array(f['LFID'])[useInd]  # LVIS flight ID number
         self.lShot = np.array(f['SHOTNUMBER'])[useInd]  # the LVIS shot number, a label
-        self.waves = np.array(f['RXWAVE'])[useInd]  # the recieved waveforms. The data
+        self.waves = np.array(f['RXWAVE'])[useInd]  # the received waveforms. The data
         self.nBins = self.waves.shape[1]
 
         # these variables will be converted to easier variables

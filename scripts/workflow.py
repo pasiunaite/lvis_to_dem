@@ -2,35 +2,50 @@
 
 """
 Workflow for processing LVIS data.
+Pine Island Glacier area of interest bounding box: [-74, 97; -75.7, -104]
 """
 
 from lvis_ground import lvisGround
+from handleTiff import tiffHandle
+import argparse
+
+
+def getCmdArgs():
+    """
+    Function parses command line arguments.
+    :return: args: cmd arguments
+    """
+    # Create an argparse object with a help comment
+    parser = argparse.ArgumentParser(description="Create a DEM from a specified file of any chosen resolution.")
+    # Add arguments
+    parser.add_argument('--y', dest='year', type=int, default=2015, help='Year of the data collection: 2009 or 2015')
+    parser.add_argument('--fn', dest='filename', type=str, default='ILVIS1B_AQ2015_1017_R1605_056419.h5', help='Filename')
+    parser.add_argument('--dem_fn', dest='dem_name', type=str, default='dem', help='DEM filename')
+    parser.add_argument('--res', dest='resolution', type=int, default=30.0, help="DEM resolution")
+    # Parse arguments
+    args = parser.parse_args()
+    return args
 
 
 if __name__ == "__main__":
-    filename = '/geos/netdata/avtrain/data/3d/oosa/assignment/lvis/2015/ILVIS1B_AQ2015_1017_R1605_071670.h5'
+    # Get command line arguments
+    args = getCmdArgs()
+    file_dir = '/geos/netdata/avtrain/data/3d/oosa/assignment/lvis/' + str(args.year) + '/' + args.filename
 
-    # find bounds
-    b = lvisGround(filename, onlyBounds=True)
+    # Read in LVIS data within the area of interest
+    lvis = lvisGround(file_dir, minX=256.0, minY=-75.7, maxX=263.0, maxY=-74.0, setElev=True)
 
-    # set some bounds
-    x0 = b.bounds[0]
-    y0 = b.bounds[1]
-    x1 = (b.bounds[2]-b.bounds[0])/15+b.bounds[0]
-    y1 = (b.bounds[3]-b.bounds[1])/15+b.bounds[1]
+    # If there is data in the ROI, then process it.
+    if lvis.data_present:
+        # find the ground and reproject
+        lvis.estimateGround()
+        lvis.reproject(4326, 3031)
 
-    # read in bounds
-    lvis = lvisGround(filename, minX=x0, minY=y0, maxX=x1, maxY=y1, setElev=True)
+        # Plot data points
+        #lvis.plot_data_points()
 
-    lvis.reproject(4326, 3031)
-
-    # find the ground
-    lvis.estimateGround()
-
-    lvis.remove_no_data()
-
-    lvis.plot_dem()
-
-    #print(lvis.dumpBounds())
-
+        # Create a tiff and plot the resulting DEM
+        tiff_handle = tiffHandle(lvis)
+        tiff_handle.writeTiff2()
+        tiff_handle.plot_dem()
 
