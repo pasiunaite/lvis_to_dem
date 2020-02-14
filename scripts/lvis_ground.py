@@ -5,20 +5,15 @@ Some example functions for processing LVIS data.
 Author: Steven Hancock.
 """
 
-import numpy as np
 from lvis_data import lvisData
 from pyproj import Proj, transform
 from scipy.ndimage.filters import gaussian_filter1d
-import pandas as pd
-import geopandas as gpd
-import rasterio
-from matplotlib import pyplot as plt
-from handleTiff import tiffHandle
 
 from osgeo import gdal             # pacage for handling geotiff data
 from osgeo import osr              # pacage for handling projection information
 from gdal import Warp
 import numpy as np
+from matplotlib import pyplot as plt
 
 
 class lvisGround(lvisData):
@@ -53,7 +48,7 @@ class lvisGround(lvisData):
         Find centre of gravity of denoised waveforms
         """
         # allocate space for ground elevation
-        self.zG = np.full(self.nWaves, -999.9)  # no data flag for now
+        #self.zG = np.full(self.nWaves, -999.9)  # no data flag for now
 
         # allocate space and put no data flags
         self.zG = np.full((self.nWaves), -999.0)
@@ -64,6 +59,15 @@ class lvisGround(lvisData):
                 self.zG[i] = np.average(self.z[i], weights=self.denoised[i])
         print(self.zG.shape)
         print(self.zG)
+        return
+
+    def remove_no_data(self):
+        """
+        The function filters out the no data (-999.0) values out of lat, long and zG arrays
+        """
+        self.lon = self.lon[self.zG != -999.0]
+        self.lat = self.lat[self.zG != -999.0]
+        self.zG = self.zG[self.zG != -999.0]
         return
 
     def reproject(self, inEPSG, outEPSG):
@@ -106,9 +110,12 @@ class lvisGround(lvisData):
         # make array for output
         self.denoised = np.full((self.nWaves, self.nBins), 0)
 
+        print('No of waves: ', self.nWaves)
+
         # loop over waves
         for i in range(0, self.nWaves):
-            print("Denoising wave", i + 1, "of", self.nWaves)
+            if i % 10000 == 0:
+                print("Denoising wave", i + 1, "of", self.nWaves)
 
             # subtract mean background noise
             self.denoised[i] = self.waves[i] - self.meanNoise[i]
@@ -128,6 +135,14 @@ class lvisGround(lvisData):
             self.denoised[i] = gaussian_filter1d(self.denoised[i], smooWidth / res)
         print('self.lon: ', self.lon.shape)
         print('self.lat: ', self.lat.shape)
+        return
+
+    def plot_dem(self):
+        #plt.tripcolor(self.lon, self.lat, self.zG)
+        plt.scatter(x=self.lon, y=self.lat, c=self.zG, s=1)
+        cbar = plt.colorbar()
+        cbar.set_label("elevation (m)", labelpad=1)
+        plt.show()
         return
 
     def writeTiff(self, res=10.0, filename="../outputs/dem.tif", epsg=3031):
@@ -156,15 +171,3 @@ class lvisGround(lvisData):
         print("Image written to", filename)
         return
 
-    def plot_DEM(self, filename="../outputs/dem.tif"):
-        """
-        Plot DEM
-        :param filename:
-        :param self:
-        :return:
-        """
-        src = rasterio.open(filename)
-        plt.imshow(src.read(1), cmap='pink')
-        plt.show()
-
-        return
