@@ -1,13 +1,20 @@
 #!/usr/bin/python3
 
 """
-Workflow for processing LVIS data.
-Pine Island Glacier area of interest bounding box: [-74, 97; -75.7, -104]
+Task 2: create a gap-filled DEM from all the 2015 data
+
+The script also has a cmd parser to change the resolution, flight year and the output DEM name.
+Pine Island Glacier bounding box was set to the following lats and longs: [-74, 97; -75.7, 104]
+
+Author: Gabija Pasiunaite
 """
 
+import os
+import argparse
+from sys import path
+from os import getenv
 from lvis_ground import lvisGround
 from handleTiff import tiffHandle
-import argparse
 
 
 def getCmdArgs():
@@ -19,7 +26,6 @@ def getCmdArgs():
     parser = argparse.ArgumentParser(description="Create a DEM from a specified file of any chosen resolution.")
     # Add arguments
     parser.add_argument('--y', dest='year', type=int, default=2015, help='Year of the data collection: 2009 or 2015')
-    parser.add_argument('--fn', dest='filename', type=str, default='ILVIS1B_AQ2015_1017_R1605_056419.h5', help='Filename')
     parser.add_argument('--dem_fn', dest='dem_name', type=str, default='dem', help='DEM filename')
     parser.add_argument('--res', dest='resolution', type=int, default=30.0, help="DEM resolution")
     # Parse arguments
@@ -30,7 +36,18 @@ def getCmdArgs():
 if __name__ == "__main__":
     # Get command line arguments
     args = getCmdArgs()
-    file_dir = '/geos/netdata/avtrain/data/3d/oosa/assignment/lvis/' + str(args.year) + '/' + args.filename
+
+    # Get a list of hd5 files in the LVIS file directory
+    dir = '/geos/netdata/avtrain/data/3d/oosa/assignment/lvis/' + str(args.year) + '/'
+    files = [f for f in os.listdir(dir) if f.endswith('.h5')]
+
+    for file in files:
+        print(file)
+
+    # read first file to set up arrays
+    #filename = direc + fileList[0]
+
+    ## ------- mm
 
     # Read in LVIS data within the area of interest
     lvis = lvisGround(file_dir, minX=256.0, minY=-75.7, maxX=263.0, maxY=-74.0, setElev=True)
@@ -48,4 +65,3 @@ if __name__ == "__main__":
         tiff_handle = tiffHandle(lvis)
         tiff_handle.writeTiff2()
         tiff_handle.plot_dem()
-

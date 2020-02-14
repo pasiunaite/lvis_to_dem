@@ -40,7 +40,7 @@ class tiffHandle:
         nY = int((self.data.maxY - self.data.minY) / res + 1)
 
         # load data in to geotiff object
-        dst_ds = gdal.GetDriverByName('GTiff').Create(filename, nX, nY, 1, gdal.GDT_Float32)
+        dst_ds = gdal.GetDriverByName('GTiff').Create('../outputs/' + filename, nX, nY, 1, gdal.GDT_Float32)
 
         dst_ds.SetGeoTransform(geotransform)    # specify coords
         srs = osr.SpatialReference()            # establish encoding
