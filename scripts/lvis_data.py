@@ -5,6 +5,8 @@ A class to hold LVIS data with methods to read
 Author: Steven Hancock
 """
 
+import os
+import psutil
 import numpy as np
 import h5py
 
@@ -79,6 +81,13 @@ class lvisData:
         # these variables will be converted to easier variables
         self.lZN = np.array(f['Z' + str(self.nBins - 1)])[useInd]  # The elevation of the waveform bottom
         self.lZ0 = np.array(f['Z0'])[useInd]  # The elevation of the waveform top
+
+        # -------- RAM -----
+        pid = os.getpid()
+        py = psutil.Process(pid)
+        memoryUse = py.memory_info()[0] / 2. ** 30  # memory use in GB...I think
+        print('memory use:', memoryUse)
+
         f.close()
         return
 

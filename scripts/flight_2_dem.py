@@ -9,7 +9,8 @@ Pine Island Glacier bounding box was set to the following lats and longs: [-74, 
 Author: Gabija Pasiunaite
 """
 
-
+import os
+import psutil
 from lvis_ground import lvisGround
 from handleTiff import tiffHandle
 import argparse
@@ -38,6 +39,7 @@ if __name__ == "__main__":
     file_dir = '/geos/netdata/avtrain/data/3d/oosa/assignment/lvis/' + str(args.year) + '/' + args.filename
 
     # Read in LVIS data within the area of interest
+    #lvis = lvisGround(file_dir, setElev=True)
     lvis = lvisGround(file_dir, minX=256.0, minY=-75.7, maxX=263.0, maxY=-74.0, setElev=True)
 
     # If there is data in the ROI, then process it.
@@ -51,6 +53,7 @@ if __name__ == "__main__":
 
         # Create a tiff and plot the resulting DEM
         tiff_handle = tiffHandle(lvis)
-        tiff_handle.writeTiff2()
+
+        tiff_handle.writeTiff()
         tiff_handle.plot_dem()
 

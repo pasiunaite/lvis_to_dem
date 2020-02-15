@@ -5,7 +5,10 @@ Some example functions for processing LVIS data.
 Author: Steven Hancock.
 """
 
+import os
+import psutil
 import numpy as np
+import pandas as pd
 from lvis_data import lvisData
 from pyproj import Proj, transform
 from matplotlib import pyplot as plt
@@ -16,6 +19,9 @@ class lvisGround(lvisData):
     """
     LVIS class with extra processing steps
     """
+
+    #STORE = pd.HDFStore('denoised_data.h5')
+
     def __init__(self, filename, minX=-100000000, maxX=100000000, minY=-1000000000, maxY=100000000,
                  setElev=False, onlyBounds=False):
         lvisData.__init__(self, filename, minX=minX, minY=minY, maxX=maxX, maxY=maxY, setElev=setElev,
@@ -95,10 +101,15 @@ class lvisGround(lvisData):
         self.denoised = np.full((self.nWaves, self.nBins), 0)
 
         print('No of waves: ', self.nWaves, 'resolution: ', res)
+        # ----- RAM ---
+        pid = os.getpid()
+        py = psutil.Process(pid)
+        memoryUse = py.memory_info()[0] / 2. ** 30  # memory use in GB...I think
+        print('memory use:', memoryUse)
 
         # loop over waves
         for i in range(0, self.nWaves):
-            if i % 10000 == 0:
+            if i % 50000 == 0:
                 print("Denoising wave", i + 1, "of", self.nWaves)
 
             # subtract mean background noise
@@ -128,6 +139,14 @@ class lvisGround(lvisData):
         plt.show()
         return
 
-    def dem(self):
+    def save_to_file(self, filename='data_2015'):
+        # Construct a pandas dataframe
+        df = pd.DataFrame({'lat': self.lat, 'lon': self.lon, 'zG': self.zG})
+        self.STORE.append('data', df, format='table', data_columns=True)
 
+        #df.to_hdf('data.h5', key='df', mode='w')
         return
+
+    def get_results(self):
+        return self.lon, self.lat, self.zG
+

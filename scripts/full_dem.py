@@ -10,12 +10,13 @@ Author: Gabija Pasiunaite
 """
 
 import os
+import psutil
 import argparse
 from sys import path
 from os import getenv
 from lvis_ground import lvisGround
 from handleTiff import tiffHandle
-
+from data_store import dataStore
 
 def getCmdArgs():
     """
@@ -37,31 +38,46 @@ if __name__ == "__main__":
     # Get command line arguments
     args = getCmdArgs()
 
+    # Instantiate an empty data store
+
+    data_store = dataStore()
+
     # Get a list of hd5 files in the LVIS file directory
     dir = '/geos/netdata/avtrain/data/3d/oosa/assignment/lvis/' + str(args.year) + '/'
     files = [f for f in os.listdir(dir) if f.endswith('.h5')]
 
     for file in files:
-        print(file)
+        print('Processing file: ', file)
+        # Read in LVIS data within the area of interest
+        lvis = lvisGround(dir + file, minX=256.0, minY=-75.7, maxX=263.0, maxY=-74.0, setElev=True)
 
-    # read first file to set up arrays
-    #filename = direc + fileList[0]
+        # If there is data in the ROI, then process it.
+        if lvis.data_present:
+            # find the ground and reproject
+            lvis.estimateGround()
+            lvis.reproject(4326, 3031)
+            # append flightine data to the datastore
+            lons, lats, zGs = lvis.get_results()
+            data_store.append_data(lons, lats, zGs)
 
-    ## ------- mm
+            # ---- RAM -----
+            pid = os.getpid()
+            py = psutil.Process(pid)
+            memoryUse = py.memory_info()[0] / 2. ** 30  # memory use in GB...I think
+            print('memory use:', memoryUse)
 
-    # Read in LVIS data within the area of interest
-    lvis = lvisGround(file_dir, minX=256.0, minY=-75.7, maxX=263.0, maxY=-74.0, setElev=True)
+    # save the processed data to file
+    data_store.save_data()
 
-    # If there is data in the ROI, then process it.
-    if lvis.data_present:
-        # find the ground and reproject
-        lvis.estimateGround()
-        lvis.reproject(4326, 3031)
-
-        # Plot data points
-        #lvis.plot_data_points()
 
         # Create a tiff and plot the resulting DEM
-        tiff_handle = tiffHandle(lvis)
-        tiff_handle.writeTiff2()
-        tiff_handle.plot_dem()
+    #tiff_handle = tiffHandle(lvis)
+    #tiff_handle.writeTiff()
+    #tiff_handle.plot_dem()
+
+
+    # Managing memory:
+    """
+    Pandas + chunks: https://towardsdatascience.com/why-and-how-to-use-pandas-with-large-data-9594dda2ea4c
+    Pandas + dask: https://towardsdatascience.com/how-to-handle-large-datasets-in-python-with-pandas-and-dask-34f43a897d55
+    """
