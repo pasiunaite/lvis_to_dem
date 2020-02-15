@@ -11,9 +11,10 @@ Author: Gabija Pasiunaite
 
 import os
 import psutil
+import timeit
+import argparse
 from lvis_ground import lvisGround
 from handleTiff import tiffHandle
-import argparse
 
 
 def getCmdArgs():
@@ -34,12 +35,14 @@ def getCmdArgs():
 
 
 if __name__ == "__main__":
+    # Time the run
+    start = timeit.default_timer()
+
     # Get command line arguments
     args = getCmdArgs()
     file_dir = '/geos/netdata/avtrain/data/3d/oosa/assignment/lvis/' + str(args.year) + '/' + args.filename
 
     # Read in LVIS data within the area of interest
-    #lvis = lvisGround(file_dir, setElev=True)
     lvis = lvisGround(file_dir, minX=256.0, minY=-75.7, maxX=263.0, maxY=-74.0, setElev=True)
 
     # If there is data in the ROI, then process it.
@@ -47,6 +50,8 @@ if __name__ == "__main__":
         # find the ground and reproject
         lvis.estimateGround()
         lvis.reproject(4326, 3031)
+
+        lvis.save_to_file('test')
 
         # Plot data points
         #lvis.plot_data_points()

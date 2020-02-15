@@ -11,7 +11,6 @@ import psutil
 from pyproj import Proj, transform  # package for reprojecting data
 from osgeo import gdal             # pacage for handling geotiff data
 from osgeo import osr              # pacage for handling projection information
-from gdal import Warp
 import numpy as np
 import rasterio
 from matplotlib import pyplot as plt
@@ -22,14 +21,12 @@ class tiffHandle:
     Class to handle geotiff files
     """
 
-    def __init__(self):
+    def __init__(self, dataset):
         """
         Class initialiser
         Does nothing as this is only an example
         """
-        self.lon = np.empty((0, 1), dtype='float64')
-        self.lat = np.empty((0, 1), dtype='float64')
-        self.zG = np.empty((0, 1), dtype='float64')
+        self.data = dataset
 
 
     def writeTiff(self, res=30.0, filename="lvis_image.tif", epsg=3031):
@@ -83,6 +80,7 @@ class tiffHandle:
         dst_ds.GetRasterBand(1).SetNoDataValue(-999)  # set no data value
         dst_ds.FlushCache()  # write to disk
         dst_ds = None
+
         # ----- RAM ---
         pid = os.getpid()
         py = psutil.Process(pid)

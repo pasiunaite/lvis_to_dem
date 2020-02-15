@@ -12,6 +12,7 @@ Author: Gabija Pasiunaite
 import os
 import psutil
 import argparse
+import timeit
 from sys import path
 from os import getenv
 from lvis_ground import lvisGround
@@ -26,7 +27,7 @@ def getCmdArgs():
     # Create an argparse object with a help comment
     parser = argparse.ArgumentParser(description="Create a DEM from a specified file of any chosen resolution.")
     # Add arguments
-    parser.add_argument('--y', dest='year', type=int, default=2015, help='Year of the data collection: 2009 or 2015')
+    parser.add_argument('--y', dest='year', type=int, default=2009, help='Year of the data collection: 2009 or 2015')
     parser.add_argument('--dem_fn', dest='dem_name', type=str, default='dem', help='DEM filename')
     parser.add_argument('--res', dest='resolution', type=int, default=30.0, help="DEM resolution")
     # Parse arguments
@@ -35,6 +36,9 @@ def getCmdArgs():
 
 
 if __name__ == "__main__":
+    # Time the run
+    start = timeit.default_timer()
+
     # Get command line arguments
     args = getCmdArgs()
 
@@ -63,11 +67,14 @@ if __name__ == "__main__":
             # ---- RAM -----
             pid = os.getpid()
             py = psutil.Process(pid)
-            memoryUse = py.memory_info()[0] / 2. ** 30  # memory use in GB...I think
+            memoryUse = py.memory_info()[0] / 2. ** 30  # memory use in GB
             print('memory use:', memoryUse)
 
     # save the processed data to file
-    data_store.save_data()
+    data_store.save_data(str(args.year))
+
+    stop = timeit.default_timer()
+    print('Processing time: ' + str((stop - start) / 60.0) + ' min')
 
 
         # Create a tiff and plot the resulting DEM

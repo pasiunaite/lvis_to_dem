@@ -20,8 +20,6 @@ class lvisGround(lvisData):
     LVIS class with extra processing steps
     """
 
-    #STORE = pd.HDFStore('denoised_data.h5')
-
     def __init__(self, filename, minX=-100000000, maxX=100000000, minY=-1000000000, maxY=100000000,
                  setElev=False, onlyBounds=False):
         lvisData.__init__(self, filename, minX=minX, minY=minY, maxX=maxX, maxY=maxY, setElev=setElev,
@@ -140,11 +138,12 @@ class lvisGround(lvisData):
         return
 
     def save_to_file(self, filename='data_2015'):
-        # Construct a pandas dataframe
-        df = pd.DataFrame({'lat': self.lat, 'lon': self.lon, 'zG': self.zG})
-        self.STORE.append('data', df, format='table', data_columns=True)
-
-        #df.to_hdf('data.h5', key='df', mode='w')
+        """
+        Save all the processed data into a binary compressed data format for retrieval later.
+        :param filename:
+        :return:
+        """
+        np.savez_compressed(filename, lon=self.lon, lat=self.lat, elev=self.zG)
         return
 
     def get_results(self):

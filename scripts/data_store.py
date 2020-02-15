@@ -42,6 +42,11 @@ class dataStore:
         self.elev = np.append(self.elev, zG)
         return
 
-    def save_data(self):
-        np.savez_compressed('./data', lon=self.lon, lat=self.lat, elev=self.elev)
+    def save_data(self, filename='data_2015'):
+        """
+        Save all the processed data into a binary compressed data format for retrieval later.
+        :param filename:
+        :return:
+        """
+        np.savez_compressed(filename, lon=self.lon, lat=self.lat, elev=self.elev)
         return
