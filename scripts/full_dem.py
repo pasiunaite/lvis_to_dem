@@ -16,8 +16,7 @@ import timeit
 from sys import path
 from os import getenv
 from lvis_ground import lvisGround
-from handleTiff import tiffHandle
-from data_store import dataStore
+from dem import DEM
 
 
 def getCmdArgs():
@@ -28,12 +27,28 @@ def getCmdArgs():
     # Create an argparse object with a help comment
     parser = argparse.ArgumentParser(description="Create a DEM from a specified file of any chosen resolution.")
     # Add arguments
-    parser.add_argument('--y', dest='year', type=int, default=2009, help='Year of the data collection: 2009 or 2015')
-    parser.add_argument('--dem_fn', dest='dem_name', type=str, default='dem', help='DEM filename')
+    parser.add_argument('--y', dest='year', type=int, default=2015, help='Year of the data collection: 2009 or 2015')
     parser.add_argument('--res', dest='resolution', type=int, default=30.0, help="DEM resolution")
     # Parse arguments
     args = parser.parse_args()
     return args
+
+
+def merge_tiles(year):
+    # Change directory into the outputs file dir
+    os.chdir(r"../outputs/" + str(year))
+    # Get all the files in that dir that end with .tif
+    files = [f for f in os.listdir('./') if f.endswith('*.tif')]
+    files_str = " ".join(files)
+    print('Merging these files: ', files_str)
+
+    # Merge all the tiles using GDAL merge command. Set no data value to -999.0
+    merge_cmd = "gdal_merge.py -o 2015.tif -of gtiff -a_nodata -999.0 " + files_str
+    os.system(merge_cmd)
+
+    # Go back to the main working directory
+    os.chdir(r"../../scripts")
+    return
 
 
 if __name__ == "__main__":
@@ -45,26 +60,34 @@ if __name__ == "__main__":
 
     # Instantiate an empty data store
 
-    data_store = dataStore()
+    #data_store = dataStore()
 
     # Get a list of hd5 files in the LVIS file directory
     dir = '/geos/netdata/avtrain/data/3d/oosa/assignment/lvis/' + str(args.year) + '/'
     files = [f for f in os.listdir(dir) if f.endswith('.h5')]
 
-    for file in files:
+    for i in range (2, 4):
+        file = files[i]
+    #for file in files:
         print('Processing file: ', file)
         # Read in LVIS data within the area of interest
-        #lvis = lvisGround(dir + file, minX=256.0, minY=-75.7, maxX=263.0, maxY=-74.0, setElev=True)
-        lvis = lvisGround(dir + file, setElev=True)
+        lvis = lvisGround(dir + file, minX=255.0, minY=-77, maxX=264.0, maxY=-73.0, setElev=True)
 
         # If there is data in the ROI, then process it.
         if lvis.data_present:
+            full_fn = '/' + str(args.year) + '/' + file[-9:-3] + '_dem.tif'
             # find the ground and reproject
             lvis.estimateGround()
             lvis.reproject(4326, 3031)
             # append flightine data to the datastore
-            lons, lats, zGs = lvis.get_results()
-            data_store.append_data(lons, lats, zGs)
+            #lons, lats, zGs = lvis.get_results()
+            #data_store.append_data(lons, lats, zGs)
+
+            dem = DEM(elevs=lvis.zG, lons=lvis.lon, lats=lvis.lat, res=args.resolution)
+            dem.points_to_raster()
+            dem.gapfill()
+            dem.write_tiff(filename=full_fn)
+            #dem.plot_dem(filename=full_fn)
 
             # ---- RAM -----
             pid = os.getpid()
@@ -72,8 +95,11 @@ if __name__ == "__main__":
             memoryUse = py.memory_info()[0] / 2. ** 30  # memory use in GB
             print('memory use:', memoryUse)
 
+    merge_tiles(year=args.year)
+
+
     # save the processed data to file
-    data_store.save_data(str(args.year))
+    #data_store.save_data(str(args.year))
 
     stop = timeit.default_timer()
     print('Processing time: ' + str((stop - start) / 60.0) + ' min')

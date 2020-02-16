@@ -101,7 +101,7 @@ class tiffHandle:
         plt.show()
         return
 
-    def readTiff(self, filename, epsg=27700):
+    def readTiff(self, filename, epsg=3031):
         """
         Read a geotiff in to RAM
         """

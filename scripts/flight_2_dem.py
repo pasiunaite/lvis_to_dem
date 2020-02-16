@@ -9,12 +9,11 @@ Pine Island Glacier bounding box was set to the following lats and longs: [-74, 
 Author: Gabija Pasiunaite
 """
 
-import os
-import psutil
+
 import timeit
 import argparse
 from lvis_ground import lvisGround
-from handleTiff import tiffHandle
+from dem import DEM
 
 
 def getCmdArgs():
@@ -27,7 +26,6 @@ def getCmdArgs():
     # Add arguments
     parser.add_argument('--y', dest='year', type=int, default=2015, help='Year of the data collection: 2009 or 2015')
     parser.add_argument('--fn', dest='filename', type=str, default='ILVIS1B_AQ2015_1017_R1605_056419.h5', help='Filename')
-    parser.add_argument('--dem_fn', dest='dem_name', type=str, default='dem', help='DEM filename')
     parser.add_argument('--res', dest='resolution', type=int, default=30.0, help="DEM resolution")
     # Parse arguments
     args = parser.parse_args()
@@ -43,8 +41,8 @@ if __name__ == "__main__":
     file_dir = '/geos/netdata/avtrain/data/3d/oosa/assignment/lvis/' + str(args.year) + '/' + args.filename
 
     # Read in LVIS data within the area of interest
-    #lvis = lvisGround(file_dir, minX=256.0, minY=-75.7, maxX=263.0, maxY=-74.0, setElev=True)
-    lvis = lvisGround(file_dir, setElev=True)
+    lvis = lvisGround(file_dir, minX=256.0, minY=-75.7, maxX=263.0, maxY=-74.0, setElev=True)
+    #lvis = lvisGround(file_dir, setElev=True)
 
     # If there is data in the ROI, then process it.
     if lvis.data_present:
@@ -52,16 +50,15 @@ if __name__ == "__main__":
         lvis.estimateGround()
         lvis.reproject(4326, 3031)
 
-        lvis.save_to_file('test')
-
         # Plot data points
         #lvis.plot_data_points()
 
         # Create a tiff and plot the resulting DEM
-        tiff_handle = tiffHandle(lvis)
-
-        tiff_handle.writeTiff()
-        tiff_handle.plot_dem()
+        dem = DEM(elevs=lvis.zG, lons=lvis.lon, lats=lvis.lat, res=args.resolution)
+        dem.points_to_raster()
+        dem.gapfill()
+        dem.write_tiff(filename='dem' + args.filename[-10:-3])
+        dem.plot_dem(filename='dem' + args.filename[-10:-3])
 
     stop = timeit.default_timer()
     print('Processing time: ' + str((stop - start) / 60.0) + ' min')
