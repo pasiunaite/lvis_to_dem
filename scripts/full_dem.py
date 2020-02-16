@@ -38,7 +38,7 @@ def merge_tiles(year):
     # Change directory into the outputs file dir
     os.chdir(r"../outputs/" + str(year))
     # Get all the files in that dir that end with .tif
-    files = [f for f in os.listdir('./') if f.endswith('*.tif')]
+    files = [f for f in os.listdir('./') if f.endswith('.tif')]
     files_str = " ".join(files)
     print('Merging these files: ', files_str)
 
@@ -58,17 +58,11 @@ if __name__ == "__main__":
     # Get command line arguments
     args = getCmdArgs()
 
-    # Instantiate an empty data store
-
-    #data_store = dataStore()
-
     # Get a list of hd5 files in the LVIS file directory
     dir = '/geos/netdata/avtrain/data/3d/oosa/assignment/lvis/' + str(args.year) + '/'
     files = [f for f in os.listdir(dir) if f.endswith('.h5')]
 
-    for i in range (2, 4):
-        file = files[i]
-    #for file in files:
+    for file in files:
         print('Processing file: ', file)
         # Read in LVIS data within the area of interest
         lvis = lvisGround(dir + file, minX=255.0, minY=-77, maxX=264.0, maxY=-73.0, setElev=True)
@@ -79,9 +73,6 @@ if __name__ == "__main__":
             # find the ground and reproject
             lvis.estimateGround()
             lvis.reproject(4326, 3031)
-            # append flightine data to the datastore
-            #lons, lats, zGs = lvis.get_results()
-            #data_store.append_data(lons, lats, zGs)
 
             dem = DEM(elevs=lvis.zG, lons=lvis.lon, lats=lvis.lat, res=args.resolution)
             dem.points_to_raster()
@@ -93,26 +84,9 @@ if __name__ == "__main__":
             pid = os.getpid()
             py = psutil.Process(pid)
             memoryUse = py.memory_info()[0] / 2. ** 30  # memory use in GB
-            print('memory use:', memoryUse)
+            print('memory use:', memoryUse[0:5], 'GB')
 
     merge_tiles(year=args.year)
 
-
-    # save the processed data to file
-    #data_store.save_data(str(args.year))
-
     stop = timeit.default_timer()
     print('Processing time: ' + str((stop - start) / 60.0) + ' min')
-
-
-        # Create a tiff and plot the resulting DEM
-    #tiff_handle = tiffHandle(lvis)
-    #tiff_handle.writeTiff()
-    #tiff_handle.plot_dem()
-
-
-    # Managing memory:
-    """
-    Pandas + chunks: https://towardsdatascience.com/why-and-how-to-use-pandas-with-large-data-9594dda2ea4c
-    Pandas + dask: https://towardsdatascience.com/how-to-handle-large-datasets-in-python-with-pandas-and-dask-34f43a897d55
-    """

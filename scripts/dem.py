@@ -17,7 +17,7 @@ from matplotlib import pyplot as plt
 
 class DEM:
 
-    def __init__(self, elevs, lons, lats, res=10.0):
+    def __init__(self, elevs, lons, lats, res=30.0):
         """
         Initializes empty lat, long and elevation arrays to store values.
         """
@@ -29,6 +29,10 @@ class DEM:
         self.nY = int((np.max(self.y) - np.min(self.y)) / self.res + 1)
 
     def points_to_raster(self):
+        """
+        The funciton converts point data to a raster of specified resolution.
+        The value of a pixel is taken as a mean of all points that fall within the pixel.
+        """
         # Points -> Raster
         # Create a raster using histogram2d
         self.elev, yi, xi = np.histogram2d(self.y, self.x, bins=(self.nY, self.nX), weights=self.elev, normed=False)
@@ -43,11 +47,10 @@ class DEM:
 
     def write_tiff(self, filename="fill_test.tif", epsg=3031):
         """
-        Function converts a raster to a GeoTIFF and saves the file.
+        Function converts a raster to a GeoTIFF and saves it in the outputs directory.
         Author: Steven Hancock.
-        :param filename:
-        :param epsg:
-        :return:
+        :param filename: output file name
+        :param epsg:     EPSG projection
         """
         # Raster -> GeoTiff
         # set geolocation information (note geotiffs count down from top edge in Y)
@@ -70,6 +73,10 @@ class DEM:
 
 
     def plot_dem(self, filename="fill_test.tif"):
+        """
+        Helper function to plot resulting DEM.
+        :param filename: name of file to plot.
+        """
         src = rasterio.open("../outputs/" + filename)
         ax = plt.figure(1, figsize=[10, 9])
         #self.elev[self.elev == -999.0] = np.nan
@@ -90,29 +97,21 @@ class DEM:
         return
 
     def merge_tiles(self, year):
+        """
+        The function merges multiple tiles into a single GeoTiff.
+        :param year: year of data collection
+        """
         # Change directory into the outputs file dir
         os.chdir(r"../outputs/" + str(year))
         # Get all the files in that dir that end with .tif
-        files = [f for f in os.listdir('./') if f.endswith('*.tif')]
+        files = [f for f in os.listdir('./') if f.endswith('.tif')]
         files_str = " ".join(files)
         print('Merging these files: ', files_str)
 
-        # Merge all the tiles using GDAL merge command
+        # Merge all the tiles using GDAL merge command. Set no data value to -999.0
         merge_cmd = "gdal_merge.py -o 2015.tif -of gtiff -a_nodata -999.0 " + files_str
-
         os.system(merge_cmd)
+
         # Go back to the main working directory
         os.chdir(r"../../scripts")
-
-
-if __name__ == "__main__":
-    dataset = np.load('2015.npz')
-    lons = dataset['lon']
-    lats = dataset['lat']
-    elev = dataset['elev']
-    print(elev.shape)
-
-    dem = DEM(elevs=elev, lons=lons, lats=lats, res=30.0)
-    dem.points_to_raster()
-    dem.write_tiff()
-    dem.plot_dem()
+        return
