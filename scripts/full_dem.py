@@ -19,6 +19,7 @@ from lvis_ground import lvisGround
 from handleTiff import tiffHandle
 from data_store import dataStore
 
+
 def getCmdArgs():
     """
     Function parses command line arguments.
@@ -27,7 +28,7 @@ def getCmdArgs():
     # Create an argparse object with a help comment
     parser = argparse.ArgumentParser(description="Create a DEM from a specified file of any chosen resolution.")
     # Add arguments
-    parser.add_argument('--y', dest='year', type=int, default=2009, help='Year of the data collection: 2009 or 2015')
+    parser.add_argument('--y', dest='year', type=int, default=2015, help='Year of the data collection: 2009 or 2015')
     parser.add_argument('--dem_fn', dest='dem_name', type=str, default='dem', help='DEM filename')
     parser.add_argument('--res', dest='resolution', type=int, default=30.0, help="DEM resolution")
     # Parse arguments
@@ -53,7 +54,8 @@ if __name__ == "__main__":
     for file in files:
         print('Processing file: ', file)
         # Read in LVIS data within the area of interest
-        lvis = lvisGround(dir + file, minX=256.0, minY=-75.7, maxX=263.0, maxY=-74.0, setElev=True)
+        #lvis = lvisGround(dir + file, minX=256.0, minY=-75.7, maxX=263.0, maxY=-74.0, setElev=True)
+        lvis = lvisGround(dir + file, setElev=True)
 
         # If there is data in the ROI, then process it.
         if lvis.data_present:
