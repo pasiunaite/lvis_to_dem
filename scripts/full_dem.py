@@ -28,7 +28,7 @@ def getCmdArgs():
     # Create an argparse object with a help comment
     parser = argparse.ArgumentParser(description="Create a DEM from a specified file of any chosen resolution.")
     # Add arguments
-    parser.add_argument('--y', dest='year', type=int, default=2015, help='Year of the data collection: 2009 or 2015')
+    parser.add_argument('--y', dest='year', type=int, default=2009, help='Year of the data collection: 2009 or 2015')
     parser.add_argument('--dem_fn', dest='dem_name', type=str, default='dem', help='DEM filename')
     parser.add_argument('--res', dest='resolution', type=int, default=30.0, help="DEM resolution")
     # Parse arguments

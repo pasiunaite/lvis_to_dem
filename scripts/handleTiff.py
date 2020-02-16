@@ -60,6 +60,8 @@ class tiffHandle:
         # this is a simple pack which will assign a single footprint to each pixel
         imageArr[yInds, xInds] = data
 
+
+        # --------- GEOTIFF --------
         # set geolocation information (note geotiffs count down from top edge in Y)
         geotransform = (minX, res, 0, maxY, 0, -res)
 

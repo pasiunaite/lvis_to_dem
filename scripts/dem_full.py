@@ -76,7 +76,7 @@ class DEM:
 
 
 if __name__ == "__main__":
-    dataset = np.load('data.npz')
+    dataset = np.load('2015.npz')
     lons = dataset['lon']
     lats = dataset['lat']
     elev = dataset['elev']
