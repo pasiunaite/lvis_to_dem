@@ -13,6 +13,7 @@ from lvis_data import lvisData
 from pyproj import Proj, transform
 from matplotlib import pyplot as plt
 from scipy.ndimage.filters import gaussian_filter1d
+import gc
 
 
 class lvisGround(lvisData):
@@ -42,6 +43,10 @@ class lvisGround(lvisData):
         self.lon = self.lon[self.zG != -999.0] #- 180
         self.lat = self.lat[self.zG != -999.0]
         self.zG = self.zG[self.zG != -999.0]
+
+        # Save RAM by removing z and garbage
+        del self.z
+        gc.collect()
         return
 
     def CofG(self):
@@ -126,15 +131,6 @@ class lvisGround(lvisData):
 
             # smooth
             self.denoised[i] = gaussian_filter1d(self.denoised[i], smooWidth / res)
-        return
-
-    def plot_data_points(self):
-        #plt.tripcolor(self.lon, self.lat, self.zG)
-        plt.scatter(x=self.lon, y=self.lat, c=self.zG, s=1)
-        plt.gca().invert_xaxis()
-        cbar = plt.colorbar()
-        cbar.set_label("elevation (m)", labelpad=15)
-        plt.show()
         return
 
     def save_to_file(self, filename='data_2015'):

@@ -1,0 +1,80 @@
+<VRTDataset rasterXSize="106" rasterYSize="202">
+  <SRS>PROJCS["WGS 84 / Antarctic Polar Stereographic",GEOGCS["WGS 84",DATUM["WGS_1984",SPHEROID["WGS 84",6378137,298.257223563,AUTHORITY["EPSG","7030"]],AUTHORITY["EPSG","6326"]],PRIMEM["Greenwich",0,AUTHORITY["EPSG","8901"]],UNIT["degree",0.0174532925199433,AUTHORITY["EPSG","9122"]],AUTHORITY["EPSG","4326"]],PROJECTION["Polar_Stereographic"],PARAMETER["latitude_of_origin",-71],PARAMETER["central_meridian",0],PARAMETER["scale_factor",1],PARAMETER["false_easting",0],PARAMETER["false_northing",0],UNIT["metre",1,AUTHORITY["EPSG","9001"]],AXIS["Easting",EAST],AXIS["Northing",NORTH],AUTHORITY["EPSG","3031"]]</SRS>
+  <GeoTransform> -1.6541979654284567e+06,  1.0000000000000000e+03,  0.0000000000000000e+00, -1.9093369281152351e+05,  0.0000000000000000e+00, -1.0000000000000000e+03</GeoTransform>
+  <VRTRasterBand dataType="Float32" band="1">
+    <PixelFunctionType>average</PixelFunctionType><PixelFunctionLanguage>Python</PixelFunctionLanguage><PixelFunctionCode><![CDATA[
+    import numpy as np
+
+    def average(in_ar, out_ar, xoff, yoff, xsize, ysize, raster_xsize,raster_ysize, buf_radius, gt, **kwargs):
+        x = np.ma.masked_equal(in_ar, -999)
+        np.mean(x, axis = 0, out = out_ar, dtype = 'Float32')
+        mask = np.all(x.mask, axis = 0)
+        out_ar[mask]=-999
+    ]]></PixelFunctionCode><NoDataValue>-999</NoDataValue>
+    <ColorInterp>Gray</ColorInterp>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="1">./056419_dem.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="5" RasterYSize="32" DataType="Float32" BlockXSize="5" BlockYSize="32"/>
+      <SrcRect xOff="0" yOff="0" xSize="5" ySize="32"/>
+      <DstRect xOff="94.2428318020785" yOff="0" xSize="5" ySize="32"/>
+      <NODATA>-999</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="1">./057119_dem.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="27" RasterYSize="171" DataType="Float32" BlockXSize="27" BlockYSize="75"/>
+      <SrcRect xOff="0" yOff="0" xSize="27" ySize="171"/>
+      <DstRect xOff="78.5189755682482" yOff="31.1134104317733" xSize="27" ySize="171"/>
+      <NODATA>-999</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="1">./058236_dem.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="17" RasterYSize="184" DataType="Float32" BlockXSize="17" BlockYSize="120"/>
+      <SrcRect xOff="0" yOff="0" xSize="17" ySize="184"/>
+      <DstRect xOff="70.0057057412798" yOff="17.8092570869226" xSize="17" ySize="184"/>
+      <NODATA>-999</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="1">./059044_dem.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="4" RasterYSize="17" DataType="Float32" BlockXSize="4" BlockYSize="17"/>
+      <SrcRect xOff="0" yOff="0" xSize="4" ySize="17"/>
+      <DstRect xOff="84.7441033474668" yOff="1.33070123161591" xSize="4" ySize="17"/>
+      <NODATA>-999</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="1">./061585_dem.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="46" RasterYSize="131" DataType="Float32" BlockXSize="46" BlockYSize="44"/>
+      <SrcRect xOff="0" yOff="0" xSize="46" ySize="131"/>
+      <DstRect xOff="0" yOff="8.10112665917096" xSize="46" ySize="131"/>
+      <NODATA>-999</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="1">./062827_dem.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="9" RasterYSize="75" DataType="Float32" BlockXSize="9" BlockYSize="75"/>
+      <SrcRect xOff="0" yOff="0" xSize="9" ySize="75"/>
+      <DstRect xOff="43.3605389530733" yOff="5.82270219852665" xSize="9" ySize="75"/>
+      <NODATA>-999</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="1">./064932_dem.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="9" RasterYSize="79" DataType="Float32" BlockXSize="9" BlockYSize="79"/>
+      <SrcRect xOff="0" yOff="0" xSize="9" ySize="79"/>
+      <DstRect xOff="34.3452267190649" yOff="6.87407719369463" xSize="9" ySize="79"/>
+      <NODATA>-999</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="1">./065632_dem.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="57" RasterYSize="134" DataType="Float32" BlockXSize="57" BlockYSize="35"/>
+      <SrcRect xOff="0" yOff="0" xSize="57" ySize="134"/>
+      <DstRect xOff="2.50442856518598" yOff="10.6271169666489" xSize="57" ySize="134"/>
+      <NODATA>-999</NODATA>
+    </ComplexSource>
+  </VRTRasterBand>
+</VRTDataset>

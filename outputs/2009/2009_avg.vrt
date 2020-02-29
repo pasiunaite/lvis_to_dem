@@ -1,0 +1,48 @@
+<VRTDataset rasterXSize="115" rasterYSize="156">
+  <SRS>PROJCS["WGS 84 / Antarctic Polar Stereographic",GEOGCS["WGS 84",DATUM["WGS_1984",SPHEROID["WGS 84",6378137,298.257223563,AUTHORITY["EPSG","7030"]],AUTHORITY["EPSG","6326"]],PRIMEM["Greenwich",0,AUTHORITY["EPSG","8901"]],UNIT["degree",0.0174532925199433,AUTHORITY["EPSG","9122"]],AUTHORITY["EPSG","4326"]],PROJECTION["Polar_Stereographic"],PARAMETER["latitude_of_origin",-71],PARAMETER["central_meridian",0],PARAMETER["scale_factor",1],PARAMETER["false_easting",0],PARAMETER["false_northing",0],UNIT["metre",1,AUTHORITY["EPSG","9001"]],AXIS["Easting",EAST],AXIS["Northing",NORTH],AUTHORITY["EPSG","3031"]]</SRS>
+  <GeoTransform> -1.6633151468262263e+06,  1.0000000000000000e+03,  0.0000000000000000e+00, -1.9246116422272130e+05,  0.0000000000000000e+00, -1.0000000000000000e+03</GeoTransform>
+  <VRTRasterBand dataType="Float32" band="1">
+    <NoDataValue>-999</NoDataValue>
+    <ColorInterp>Gray</ColorInterp>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="1">./055102_dem.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="115" RasterYSize="118" DataType="Float32" BlockXSize="115" BlockYSize="17" />
+      <SrcRect xOff="0" yOff="0" xSize="115" ySize="118" />
+      <DstRect xOff="0" yOff="3.13569050522451" xSize="115" ySize="118" />
+      <NODATA>-999</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="1">./058456_dem.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="61" RasterYSize="156" DataType="Float32" BlockXSize="61" BlockYSize="33" />
+      <SrcRect xOff="0" yOff="0" xSize="61" ySize="156" />
+      <DstRect xOff="36.5508981737706" yOff="0" xSize="61" ySize="156" />
+      <NODATA>-999</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="1">./061398_dem.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="37" RasterYSize="141" DataType="Float32" BlockXSize="37" BlockYSize="55" />
+      <SrcRect xOff="0" yOff="0" xSize="37" ySize="141" />
+      <DstRect xOff="58.3533044917358" yOff="2.71707060927406" xSize="37" ySize="141" />
+      <NODATA>-999</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="1">./065184_dem.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="48" RasterYSize="129" DataType="Float32" BlockXSize="48" BlockYSize="42" />
+      <SrcRect xOff="0" yOff="0" xSize="48" ySize="129" />
+      <DstRect xOff="38.7095871039669" yOff="2.02389006457123" xSize="48" ySize="129" />
+      <NODATA>-999</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="1">./068453_dem.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="66" RasterYSize="34" DataType="Float32" BlockXSize="66" BlockYSize="31" />
+      <SrcRect xOff="0" yOff="0" xSize="66" ySize="34" />
+      <DstRect xOff="36.0416467658216" yOff="1.82078469374869" xSize="66" ySize="34" />
+      <NODATA>-999</NODATA>
+    </ComplexSource>
+  </VRTRasterBand>
+</VRTDataset>

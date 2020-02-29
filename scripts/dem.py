@@ -109,7 +109,8 @@ class DEM:
         print('Merging these files: ', files_str)
 
         # Merge all the tiles using GDAL merge command. Set no data value to -999.0
-        merge_cmd = "gdal_merge.py -o 2015.tif -of gtiff -a_nodata -999.0 " + files_str
+        #merge_cmd = "gdal_merge.py -o 2015.tif -of gtiff -a_nodata -999.0 " + files_str
+        merge_cmd = "gdalwarp --config GDAL_CACHEMAX 9000 -wm 9000 -r average -overwrite -f gtiff " + files_str + " " + str(year) + ".tif"
         os.system(merge_cmd)
 
         # Go back to the main working directory

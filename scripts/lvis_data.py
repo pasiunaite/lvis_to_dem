@@ -102,12 +102,6 @@ class lvisData:
             self.z[i] = np.arange(self.lZ0[i], self.lZN[i], -1.0 * res)  # returns an array of floats
         return
 
-    def getOneWave(self, ind):
-        """
-        Return a single waveform
-        """
-        return self.z[ind], self.waves[ind]
-
     def dumpCoords(self):
         """
          Dump coordinates
