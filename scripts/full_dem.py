@@ -22,6 +22,7 @@ from scipy.signal import fftconvolve
 import gc
 from lxml import etree
 from osgeo import gdal
+from astropy.convolution import convolve_fft
 
 
 
@@ -39,7 +40,7 @@ def getCmdArgs():
     args = parser.parse_args()
     return args
 
-def merge_tiles2(year):
+def merge_tiles(year):
     # Change directory into the outputs file dir
     os.chdir(r"../outputs/" + str(year))
     print("Merging files from " + str(year))
@@ -80,65 +81,11 @@ def average(in_ar, out_ar, xoff, yoff, xsize, ysize, raster_xsize,raster_ysize, 
 
     # ---------- GAP FILLING ---------
     # Fill gaps using
-    gap_fill_cmd = "gdal_fillnodata.py -md 100000 -nomask -si 5 " + str(year) + "_merged.tif " + str(year) + "_filled.tif"
+    gap_fill_cmd = "gdal_fillnodata.py -md 10 -nomask -si 1 " + str(year) + "_merged.tif " + str(year) + "_filled.tif"
+    print('Filling gaps in the data')
     os.system(gap_fill_cmd)
 
     # Go back to the main working directory
-    #os.chdir(r"../../scripts")
-    return
-
-
-def merge_tiles(year):
-    # Change directory into the outputs file dir
-    os.chdir(r"../outputs/" + str(year))
-    print("Merging files from " + str(year))
-
-    # Build a GDAL virtual image from all the rasters
-    build_vrt_cmd = "gdalbuildvrt -srcnodata -999.0 -r cubic " + str(year) + "_avg.vrt ./*_dem.tif"
-    #os.system(build_vrt_cmd)
-
-    # Add a pixel function to the VRT to average overlapping pixels.
-    # Modified from: https://gis.stackexchange.com/questions/350233/how-can-i-modify-a-vrtrasterband-sub-class-etc-from-python
-    vrt_tree = etree.parse(str(year) + "_avg.vrt")
-    vrt_root = vrt_tree.getroot()
-    vrtband1 = vrt_root.findall(".//VRTRasterBand[@band='1']")[0]
-
-    #vrtband1.set("subClass", "VRTDerivedRasterBand")
-    pixelFunctionType = etree.Element('PixelFunctionType')
-    pixelFunctionType.text = "average"
-    vrtband1.insert(0, pixelFunctionType)
-    pixelFunctionLanguage = etree.Element('PixelFunctionLanguage')
-    pixelFunctionLanguage.text = "Python"
-    vrtband1.insert(1, pixelFunctionLanguage)
-    pixelFunctionCode = etree.Element('PixelFunctionCode')
-    pixelFunctionCode.text = etree.CDATA("""
-import numpy as np
-
-def average(in_ar, out_ar, xoff, yoff, xsize, ysize, raster_xsize, raster_ysize, buf_radius, gt, **kwargs):
-    x = np.ma.masked_equal(in_ar, -999)
-    np.mean(x, axis = 0, out = out_ar, dtype = 'Float32')
-    mask = np.all(x.mask, axis = 0)
-    out_ar[mask]=-999
-    """)
-    vrtband1.insert(2, pixelFunctionCode)
-    #vrt_tree.write(str(year) + "_avg.vrt")
-
-    # Merge all the rasters, where pixels overlap - average them
-    merge_cmd = "gdal_translate --config GDAL_VRT_ENABLE_PYTHON YES " + \
-                str(year) + "_avg.vrt " + str(year) + "_merged2.tif"
-    os.system(merge_cmd)
-
-    # ---------- GAP FILLING ---------
-    # Fill gaps using
-    gap_fill_cmd = "gdal_fillnodata.py -md 1000 -nomask -si 1 " + str(year) + "_merged.tif " + str(year) + "_filled.tif"
-    os.system(gap_fill_cmd)
-
-    print(build_vrt_cmd)
-    print(merge_cmd)
-    print(gap_fill_cmd)
-
-    # Go back to the main working directory
-    #os.chdir(r"../../scripts")
     return
 
 # --------- GAUSSIAN FILTER ----------
@@ -166,26 +113,28 @@ def gaussian_blur(year):
     pixelFunctionCode.text = etree.CDATA("""
 import numpy as np
 from scipy.signal import fftconvolve
+from astropy.convolution import convolve_fft
 
 def gaussian_blur(in_ar, out_ar, xoff, yoff, xsize, ysize, raster_xsize, raster_ysize, buf_radius, gt, **kwargs):
-    print(np.array(in_ar).size)
-    size = 10
+    size = 3
+    raster = np.array(in_ar[0])
+    raster[raster == -999.0] = np.nan
     # expand in_array to fit edge of kernel
-    padded_array = np.pad(in_ar, size, 'symmetric')
+    padded_array = np.pad(raster, size, 'symmetric')
     # build kernel
     x, y = np.mgrid[-size:size + 1, -size:size + 1]
     g = np.exp(-(x ** 2 / float(size) + y ** 2 / float(size)))
     g = (g / g.sum()).astype('Float32')
-    print(g.size)
     # do the Gaussian blur
-    out_ar = fftconvolve(padded_array, g, mode='valid')
+    out = convolve_fft(padded_array, kernel=g, nan_treatment='interpolate', min_wt=0.8, preserve_nan=True)
+    out_ar[:] = out[size:-size, size:-size]
         """)
 
     vrtband1.insert(2, pixelFunctionCode)
     vrt_tree.write(str(year) + "_smoothed.vrt")
 
     # Merge all the rasters, where pixels overlap - average them
-    merge_cmd = "gdal_translate --config GDAL_VRT_ENABLE_PYTHON YES -a_nodata -999.0 -r cubic " + \
+    merge_cmd = "gdal_translate --config GDAL_VRT_ENABLE_PYTHON YES " + \
                 str(year) + "_smoothed.vrt " + str(year) + "_smoothed.tif"
     print('Applying Gaussian Blur filter')
     os.system(merge_cmd)
@@ -240,7 +189,7 @@ if __name__ == "__main__":
     """
 
 
-    merge_tiles2(year=args.year)
+    merge_tiles(year=args.year)
     gaussian_blur(year=args.year)
 
     stop = timeit.default_timer()

@@ -5,19 +5,21 @@
     <PixelFunctionType>gaussian_blur</PixelFunctionType><PixelFunctionLanguage>Python</PixelFunctionLanguage><PixelFunctionCode><![CDATA[
 import numpy as np
 from scipy.signal import fftconvolve
+from astropy.convolution import convolve_fft
 
 def gaussian_blur(in_ar, out_ar, xoff, yoff, xsize, ysize, raster_xsize, raster_ysize, buf_radius, gt, **kwargs):
-    print(np.array(in_ar).size)
-    size = 10
+    size = 3
+    raster = np.array(in_ar[0])
+    raster[raster == -999.0] = np.nan
     # expand in_array to fit edge of kernel
-    padded_array = np.pad(in_ar, size, 'symmetric')
+    padded_array = np.pad(raster, size, 'symmetric')
     # build kernel
     x, y = np.mgrid[-size:size + 1, -size:size + 1]
     g = np.exp(-(x ** 2 / float(size) + y ** 2 / float(size)))
     g = (g / g.sum()).astype('Float32')
-    print(g.size)
     # do the Gaussian blur
-    out_ar = fftconvolve(padded_array, g, mode='valid')
+    out = convolve_fft(padded_array, kernel=g, nan_treatment='interpolate', min_wt=0.8, preserve_nan=True)
+    out_ar[:] = out[size:-size, size:-size]
         ]]></PixelFunctionCode><NoDataValue>-999</NoDataValue>
     <ColorInterp>Gray</ColorInterp>
     <ComplexSource resampling="cubic">
