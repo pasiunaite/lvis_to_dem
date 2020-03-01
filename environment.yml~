@@ -1,0 +1,9 @@
+name: lvis
+channels:
+- conda-forge
+dependencies:
+- python=3.7
+- matplotlib
+- pandas
+- gdal
+- psutil
