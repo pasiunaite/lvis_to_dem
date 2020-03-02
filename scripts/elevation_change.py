@@ -37,26 +37,14 @@ class Change_Detection:
         Class constructor.
         """
         self.tiff_handler = tiffHandle()
-        self.dem1_dir = '../outputs/' + before + '/' + before + '.tif'
-        self.dem2_dir = '../outputs/' + after + '/' + after + '.tif'
-        self.dem1, self.trs1 = self.tiff_handler.readTiff(filename=self.dem1_dir)
-        self.dem2, self.trs2 = self.tiff_handler.readTiff(filename=self.dem2_dir)
+        dem1_dir = '../outputs/' + before + '/' + before + '.tif'
+        dem2_dir = '../outputs/' + after + '/' + after + '.tif'
+
+        # From here onwards we are only working with overlapping arrays
+        self.dem1, self.dem2 = warplib.memwarp_multi_fn([dem1_dir, dem2_dir], extent='intersection', res='min', t_srs=dem2_dir)
         self.glacier_shp = '../outputs/pine_island_glacier/glims_polygons.shp'
-        # TRS: 0- x corner coord, 1 - res in x, 2- ... , 3- y corner coord, 4- ..., 5 - res in y
-        print(self.trs1, self.trs2)
+        self.diff = []
 
-    def getcoords(self):
-
-        xlen, ylen = len(self.elev), len(self.elev[1, :])  # Get the length fot
-
-        self.lats, self.longs = np.empty((xlen, ylen)), np.empty((xlen, ylen))
-        # Make empty array of the same size as the elevation data
-
-        # Loop to iterate through both arrays and append coordinates to later reuse the writetiff
-        for i in range(xlen):
-            for j in range(ylen):
-                self.longs[i, j] = self.tds[1] * j + self.tds[2] * i + self.tds[0]
-                self.lats[i, j] = self.tds[4] * j + self.tds[5] * i + self.tds[3]
 
     def elevation_change(self):
         """
@@ -64,48 +52,66 @@ class Change_Detection:
         Script is heavily based on Geohackweek's tutorial on processing Mt Rainier Glacier data:
         https://geohackweek.github.io/raster/05-pygeotools_rainier/
         """
-        # function to map the overlap between the two files in accordance to the 2015 tif file
-        dem_2009, dem_2015 = warplib.memwarp_multi_fn([self.dem1_dir, self.dem2_dir], extent='intersection', res='min', t_srs=self.dem2_dir)
-
-        # Get the list of geo transform parametres from the gdal objects.
-        t_ds2015 = dem_2015.GetGeoTransform()
 
         # Get a 2D numpy masked array from the output of the previous function
-        dem2009 = iolib.ds_getma(dem_2009)
-        dem2015 = iolib.ds_getma(dem_2015)
+        dem2009 = iolib.ds_getma(self.dem1)
+        dem2015 = iolib.ds_getma(self.dem2)
 
         # Get the difference of elevation between the two DEMs
-        diff = dem2015 - dem2009
+        self.diff = dem2015 - dem2009
+
         # Write the geotiff
-        iolib.writeGTiff(diff, '../outputs/elevation_change.tif', dem_2009)
+        iolib.writeGTiff(self.diff, '../outputs/elevation_change.tif', self.dem1)
 
         # Mask areas that do not belong to the glacier
         # Create binary mask from polygon shapefile to match our warped raster datasets
-        glacier_mask = geolib.shp2array(self.glacier_shp, dem_2009)
-        # Now apply the mask to each array
-        masked_diff = np.ma.array(diff, mask=glacier_mask)
-        iolib.writeGTiff(masked_diff, '../outputs/glacier_elevation_change.tif', dem_2009)
+        glacier_mask = geolib.shp2array(self.glacier_shp, self.dem2)
+
+        # Now apply the mask to ethe difference array
+        self.diff = np.ma.array(self.diff, mask=glacier_mask)
+        iolib.writeGTiff(self.diff, '../outputs/glacier_elevation_change.tif', self.dem1)
         return
 
     def volume_change(self):
         """
-        Function calculates the volume change between the two DEMs.
+        Function calculates various glacier volume and area change metrics.
+        Again, this function is heavily based on the following tutorial:
+        https://geohackweek.github.io/raster/05-pygeotools_rainier/
         """
+        time_diff = 2015 - 2009
+        # Calculate annual rate of change
+        annual_rate = np.ma.array(self.diff) / np.array(time_diff)
 
-        px_area = self.tds[1] ** 2  # Calculate the area associated with each pixels
-        glacier = self.elev[self.elev != -999]  # Remove the missing data
-        count = len(glacier)  # Counts the amount of pixels of data in the geotiff file
-        totalarea = (px_area * count) / 1E6  # Calculate the area
+        # Extract x and y pixel resolution (m) from geotransform
+        gt = self.dem1.GetGeoTransform()
+        px_res = (gt[1], -gt[5])
+        # Calculate pixel area in m^2
+        px_area = px_res[0] * px_res[0]
 
-        print('The change of elevation was between {}m and {}m.'
-              ' With an average of {}m'.format(min(glacier), max(glacier), np.mean(glacier)))
+        # Multiple pixel area by the observed elevation change for all valid pixels over glaciers
+        dhdt_mean = annual_rate.mean()
+        # Compute area in km^2
+        area_total = px_area * annual_rate.count() / 1E6
+        # Volume change rate in km^3/yr
+        vol_rate = dhdt_mean * area_total / 1E3
+        # Volume change in km^3
+        vol_total = vol_rate * time_diff
+        # Assume intermediate density between ice and snow for volume change (Gt)
+        rho = 0.850
+        mass_rate = vol_rate * rho
+        mass_total = vol_total * rho
 
-        volchange = totalarea * (np.mean(glacier) / 1E3)
-
-        print('The total Volume change is about ' + str(volchange) + ' km^3')
+        # Print some numbers (clean this up)
+        print('%0.2f m/yr mean elevation change rate' % dhdt_mean)
+        print('%0.2f km^2 total area' % area_total)
+        print('%0.2f km^3/yr mean volume change rate' % vol_rate)
+        print('%0.2f km^3 total volume change' % vol_total)
+        print('%0.2f Gt/yr mean mass change rate' % mass_rate)
+        print('%0.2f Gt total mass change\n' % mass_total)
 
 
 if __name__ == "__main__":
     cmd_args = getCmdArgs()
     change = Change_Detection(before=cmd_args.before, after=cmd_args.after)
     change.elevation_change()
+    change.volume_change()
