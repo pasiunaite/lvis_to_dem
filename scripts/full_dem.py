@@ -13,16 +13,8 @@ import os
 import psutil
 import argparse
 import timeit
-from sys import path
-from os import getenv
-from lvis_ground import lvisGround
 from dem import lvis_to_DEM, DEM_merge
-import numpy as np
-from scipy.signal import fftconvolve
 import gc
-from lxml import etree
-from osgeo import gdal
-from astropy.convolution import convolve_fft
 
 
 def getCmdArgs():

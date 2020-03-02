@@ -1,7 +1,10 @@
 #!/usr/bin/python3
 
 """
-The script creates a gap-filled DEM from point data.
+The script hold two class definitions:
+- lvis_to_DEM for processing a single flight line to a DEM
+- DEM_merge for merging all the DEMs into a single gap-filled and smoothed out DEM.
+
 Author: Gabija pasiunaite.
 """
 
@@ -161,8 +164,8 @@ def average(in_ar, out_ar, xoff, yoff, xsize, ysize, raster_xsize,raster_ysize, 
                        self.year + "_filled.tif"
         print('Filling gaps in the data')
         os.system(gap_fill_cmd)
-
         return
+
 
     def gaussian_blur(self):
         """
