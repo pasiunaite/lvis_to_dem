@@ -13,8 +13,7 @@ Author: Gabija Pasiunaite
 import timeit
 import argparse
 from lvis_ground import lvisGround
-from dem import DEM
-import gc
+from dem import lvis_to_DEM
 
 
 def getCmdArgs():
@@ -42,16 +41,15 @@ if __name__ == "__main__":
     file_dir = '/geos/netdata/avtrain/data/3d/oosa/assignment/lvis/' + str(args.year) + '/' + args.filename
 
     # Read in LVIS data within the area of interest
-    lvis = lvisGround(file_dir, minX=256.0, minY=-75.7, maxX=263.0, maxY=-74.0, setElev=True)
+    dem = lvis_to_DEM(file_dir, minX=256.0, minY=-75.7, maxX=263.0, maxY=-74.0, setElev=True, res=args.resolution)
 
     # If there is data in the ROI, then process it.
-    if lvis.data_present:
+    if dem.data_present:
         # find the ground and reproject
-        lvis.estimateGround()
-        lvis.reproject(4326, 3031)
+        dem.estimateGround()
+        dem.reproject(4326, 3031)
 
         # Create a tiff and plot the resulting DEM
-        dem = DEM(elevs=lvis.zG, lons=lvis.lon, lats=lvis.lat, res=args.resolution)
         dem.points_to_raster()
         dem.write_tiff(filename='dem' + args.filename[-10:-3])
         dem.plot_dem(filename='dem' + args.filename[-10:-3])

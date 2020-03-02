@@ -20,7 +20,7 @@ def gaussian_blur(in_ar, out_ar, xoff, yoff, xsize, ysize, raster_xsize, raster_
     # do the Gaussian blur
     out = convolve_fft(padded_array, kernel=g, nan_treatment='interpolate', min_wt=0.8, preserve_nan=True)
     out_ar[:] = out[size:-size, size:-size]
-        ]]></PixelFunctionCode><NoDataValue>-999</NoDataValue>
+            ]]></PixelFunctionCode><NoDataValue>-999</NoDataValue>
     <ColorInterp>Gray</ColorInterp>
     <ComplexSource resampling="cubic">
       <SourceFilename relativeToVRT="1">2015_filled.tif</SourceFilename>

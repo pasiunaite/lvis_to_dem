@@ -9,7 +9,7 @@ def average(in_ar, out_ar, xoff, yoff, xsize, ysize, raster_xsize,raster_ysize, 
     np.mean(x, axis = 0, out = out_ar, dtype = 'Float32')
     mask = np.all(x.mask, axis = 0)
     out_ar[mask]=-999
-    ]]></PixelFunctionCode><NoDataValue>-999</NoDataValue>
+        ]]></PixelFunctionCode><NoDataValue>-999</NoDataValue>
     <ColorInterp>Gray</ColorInterp>
     <ComplexSource resampling="cubic">
       <SourceFilename relativeToVRT="1">./056051_dem.tif</SourceFilename>

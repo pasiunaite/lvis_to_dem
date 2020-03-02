@@ -21,10 +21,12 @@ class lvisGround(lvisData):
     LVIS class with extra processing steps
     """
 
+    """
     def __init__(self, filename, minX=-100000000, maxX=100000000, minY=-1000000000, maxY=100000000,
                  setElev=False, onlyBounds=False):
         lvisData.__init__(self, filename, minX=minX, minY=minY, maxX=maxX, maxY=maxY, setElev=setElev,
                           onlyBounds=onlyBounds)
+    """
 
     def estimateGround(self, threshScale=5, statsLen=10, minWidth=3, smooWidth=0.5):
         """
@@ -60,7 +62,6 @@ class lvisGround(lvisData):
         for i in range(0, self.nWaves):
             if np.sum(self.denoised[i]) > 0.0:  # avoid empty waveforms (clouds etc)
                 self.zG[i] = np.average(self.z[i], weights=self.denoised[i])
-        print(self.zG.shape)
         return
 
     def reproject(self, inEPSG, outEPSG):
