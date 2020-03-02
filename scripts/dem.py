@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 
 """
-The script hold two class definitions:
+The script holds two class definitions:
 - lvis_to_DEM for processing a single flight line to a DEM
 - DEM_merge for merging all the DEMs into a single gap-filled and smoothed out DEM.
 
@@ -109,12 +109,13 @@ class DEM_merge:
     Class for merging all the flightine DEMs into a single gap-filled and smoothed DEM.
     """
 
-    def __init__(self, year):
+    def __init__(self, year, resolution=100.0):
         """
         Class constructor.
         :param year: year to process
         """
         self.year = str(year)
+        self.res = resolution
 
     def merge_tiles(self):
         """
@@ -160,7 +161,7 @@ def average(in_ar, out_ar, xoff, yoff, xsize, ysize, raster_xsize,raster_ysize, 
         os.system(merge_cmd)
 
         # Fill the gaps
-        gap_fill_cmd = "gdal_fillnodata.py -md 10 -nomask -si 1 " + self.year + "_merged.tif " + \
+        gap_fill_cmd = "gdal_fillnodata.py -md 100 -nomask -si 1 " + self.year + "_merged.tif " + \
                        self.year + "_filled.tif"
         print('Filling gaps in the data')
         os.system(gap_fill_cmd)
@@ -169,13 +170,20 @@ def average(in_ar, out_ar, xoff, yoff, xsize, ysize, raster_xsize,raster_ysize, 
 
     def gaussian_blur(self):
         """
-        Function applies 3x3 Gaussian filter to smooth out the resulting DEM. The resulting file is written to
+        Function applies a Gaussian filter to smooth out the resulting DEM. The resulting file is written to
         YEAR.tif file.
         """
         # Build a GDAL virtual raster from the gap filled DEM.
         build_vrt_cmd = "gdalbuildvrt -srcnodata -999.0 -overwrite -r cubic " + self.year + "_smoothed.vrt " + \
                         self.year + "_filled.tif"
         os.system(build_vrt_cmd)
+
+        # Determine kernel size
+        kernel = 5
+        if self.res < 100:
+            kernel = 10
+        elif self.res >= 1000:
+            kernel = 3
 
         # Add a pixel function to the VRT to pass a 3x3 Gaussian filter to smooth out the DEM.
         # Modified from: https://gis.stackexchange.com/questions/350233/how-can-i-modify-a-vrtrasterband-sub-class-etc-from-python
@@ -197,7 +205,8 @@ from scipy.signal import fftconvolve
 from astropy.convolution import convolve_fft
 
 def gaussian_blur(in_ar, out_ar, xoff, yoff, xsize, ysize, raster_xsize, raster_ysize, buf_radius, gt, **kwargs):
-    size = 3
+    size = """ + str(kernel) + """
+    print(xsize, ysize, xoff, yoff)
     raster = np.array(in_ar[0])
     raster[raster == -999.0] = np.nan
     # expand in_array to fit edge of kernel
@@ -208,6 +217,7 @@ def gaussian_blur(in_ar, out_ar, xoff, yoff, xsize, ysize, raster_xsize, raster_
     g = (g / g.sum()).astype('Float32')
     # do the Gaussian blur
     out = convolve_fft(padded_array, kernel=g, nan_treatment='interpolate', min_wt=0.8, preserve_nan=True)
+    #out = convolve_fft(out, kernel=g, nan_treatment='interpolate', min_wt=0.8, preserve_nan=True)
     out_ar[:] = out[size:-size, size:-size]
             """)
 

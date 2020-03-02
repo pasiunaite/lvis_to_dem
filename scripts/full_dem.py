@@ -26,7 +26,7 @@ def getCmdArgs():
     parser = argparse.ArgumentParser(description="Create a DEM from a specified file of any chosen resolution.")
     # Add arguments
     parser.add_argument('--y', dest='year', type=int, default=2015, help='Year of the data collection: 2009 or 2015')
-    parser.add_argument('--res', dest='resolution', type=int, default=1000.0, help="DEM resolution")
+    parser.add_argument('--res', dest='resolution', type=int, default=100.0, help="DEM resolution")
     # Parse arguments
     args = parser.parse_args()
     return args
@@ -48,12 +48,12 @@ if __name__ == "__main__":
     if args.year == 2015:
         files = files + [dir2 + f for f in os.listdir(dir2) if f.endswith('.h5')]
 
-
+    """
     for file in files:
         gc.collect()
         print('Processing file: ', file)
         # Read in LVIS data within the area of interest
-        dem = lvis_to_DEM(file, minX=256.0, minY=-75.7, maxX=263.0, maxY=-74.0, setElev=True, res=args.resolution)
+        dem = lvis_to_DEM(file, minX=264.0, minY=-80.45, maxX=286.2, maxY=-73.4, setElev=True, res=args.resolution)
 
         # If there is data in the ROI, then process it.
         if dem.data_present:
@@ -72,9 +72,10 @@ if __name__ == "__main__":
             py = psutil.Process(pid)
             memoryUse = py.memory_info()[0] / 2. ** 30  # memory use in GB
             print('memory use:', str(memoryUse)[0:5], 'GB')
+        """
 
 
-    smooth_dem = DEM_merge(args.year)
+    smooth_dem = DEM_merge(args.year, args.resolution)
     smooth_dem.merge_tiles()
     smooth_dem.gaussian_blur()
 
