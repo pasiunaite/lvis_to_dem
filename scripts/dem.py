@@ -225,7 +225,7 @@ def gaussian_blur(in_ar, out_ar, xoff, yoff, xsize, ysize, raster_xsize, raster_
         vrt_tree.write(self.year + "_smoothed.vrt")
 
         # Execute the smoothing and write a tiff.
-        smooth_cmd = "gdal_translate --config GDAL_VRT_ENABLE_PYTHON YES " + self.year + "_smoothed.vrt " + self.year + ".tif"
+        smooth_cmd = "gdal_translate --config GDAL_VRT_ENABLE_PYTHON YES " + self.year + "_smoothed.vrt ../" + self.year + ".tif"
         print('Applying Gaussian Blur filter')
         os.system(smooth_cmd)
 
