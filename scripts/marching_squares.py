@@ -8,107 +8,61 @@ https://github.com/zinuzian/ImageLab2019
 import os
 import numpy as np
 from osgeo import gdal
+from handleTiff import tiffHandle
 import matplotlib.pyplot as plt
-from PyQt5 import QtGui, QtCore, QtWidgets
 from skimage.draw import line, set_color
 from skimage import measure, io, restoration
+from pygeotools.lib import iolib, warplib, geolib, timelib, malib
+
 
 
 class ContourFinder:
 
     def __init__(self, filepath):
-
-        # Load img file
-        self.filepath = filepath
-        #self.original = io.imread(self.filepath, as_gray=True)
-
         # Load the raster
-        ds = gdal.Open("../outputs/masked_elevation_change.tif")
-        self.original = np.array(ds.GetRasterBand(1).ReadAsArray())
-        print(self.original.shape, type(self.original))
+        ds = gdal.Open(filepath)
+        self.raster = np.array(ds.GetRasterBand(1).ReadAsArray())
+        print(self.raster.shape, type(self.raster))
+        return
 
-        self.pen_color = "#ff0000"
-        self.value = -1.0
+    def contour(self, interval=20):
+        print('Creating contours every ', interval, ' m')
+        # Find the first contour
+        curr_contour = np.nanmax(self.raster) - np.nanmax(self.raster) % interval
 
-    def setColor(self, colorValue):
-        self.color = colorValue
+        # Find contours at a constant value: uses Marching Squares Algorithm from scikit-image
+        contours = measure.find_contours(self.raster, curr_contour)
+        curr_contour = curr_contour - interval
 
-    def choose(self, x, y):
-        self.value = self.original[y][x]
-        return self.value
-
-
-    def find(self, value):
-        try:
-            # Denoise the original image
-            denoised = restoration.denoise_tv_chambolle(self.original, weight=0.1, multichannel=True)
-
-            print(np.min(denoised), np.max(denoised), np.median(denoised))
-            # denoised = restoration.denoise_wavelet(self.image, multichannel=True)
-
-            # Find contours at a constant value
-            # Uses Marching Squares Algorithm
-            contours = measure.find_contours(denoised, value)
-
-            # Display the image and plot all contours found
-            fig, ax = plt.subplots()
-            ax.imshow(denoised, cmap=plt.cm.gray)
-
-            for n, contour in enumerate(contours):
-                ax.plot(contour[:, 1], contour[:, 0], linewidth=2)
-
-            ax.axis('image')
-            ax.set_xticks([])
-            ax.set_yticks([])
-            plt.show()
-
-            return contours
-
-        except Exception as e:
-            print(e)
-
-    def save(self, savePath, contours, colorStr):
-        try:
-            h = colorStr.lstrip('#')
-            colorIntArray = list(int(h[i:i + 2], 16) for i in (0, 2, 4))
-            colorIntArray = np.array(colorIntArray)
-
-            colorFloatArray = colorIntArray
-
-            ext = self.filepath.split('.')[1]
-            if ext == "png" or ext == "PNG":
-                print("png detected")
-                # colorIntArray = np.append(colorIntArray, [1])
-                colorFloatArray = np.append(colorFloatArray, [255])
+        while curr_contour > np.nanmin(self.raster):
+            contours.extend(measure.find_contours(self.raster, curr_contour))
+            curr_contour = curr_contour - interval
 
 
-            # print(colorIntArray)
-            print('Color Float Array: ', colorFloatArray)
+        # Display the image and plot all contours found
+        fig, ax = plt.subplots()
+        print(np.nanmin(self.raster), np.nanmax(self.raster))
+        ax.imshow(self.raster, cmap='RdBu', clim=(-50, 50))
 
-            temp = io.imread(self.filepath, as_gray=False)
-            #print(temp)
-            for n, contour in enumerate(contours):
-                for i in range(len(contour) - 1):
-                    rr, cc = line(int(contour[i, 0]), int(contour[i, 1]), int(contour[i + 1, 0]),
-                                  int(contour[i + 1, 1]))
-                    # set_color(temp, (rr, cc), colorIntArray)
-                    set_color(temp, (rr, cc), colorFloatArray)
+        print(len(contours))
 
-            #print(temp)
-            io.imsave(savePath, temp)
+        for n, contour in enumerate(contours):
+            # Plot contours that have more than 20 points
+            if len(contour) > 20:
+                ax.plot(contour[:, 1], contour[:, 0], linewidth=0.5, color='black')
 
-            return True
-        except Exception as e:
-            print(e)
+        ax.axis('image')
+        ax.set_xticks([])
+        ax.set_yticks([])
+        plt.show()
 
-
+        return contours
 
 
 if __name__ == "__main__":
-    filepath = "../outputs/masked_elevation_change.tif"
+    filepath = "../outputs/glacier_elevation_change.tif"
     cf = ContourFinder(filepath)
-
-    cf.save("result.png", cf.find(10), "#ff0000")
+    cf.contour(interval=20)
 
 
 

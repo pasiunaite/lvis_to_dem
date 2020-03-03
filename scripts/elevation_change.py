@@ -37,8 +37,8 @@ class Change_Detection:
         Class constructor.
         """
         self.tiff_handler = tiffHandle()
-        dem1_dir = '../outputs/' + before + '/' + before + '.tif'
-        dem2_dir = '../outputs/' + after + '/' + after + '.tif'
+        dem1_dir = '../outputs/' + before + '.tif'
+        dem2_dir = '../outputs/' + after + '.tif'
 
         # From here onwards we are only working with overlapping arrays
         self.dem1, self.dem2 = warplib.memwarp_multi_fn([dem1_dir, dem2_dir], extent='intersection', res='min', t_srs=dem2_dir)
