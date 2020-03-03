@@ -14,3 +14,4 @@ dependencies:
 - lxml
 - astropy
 - scikit-image
+- tqdm
