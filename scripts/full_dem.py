@@ -48,12 +48,18 @@ if __name__ == "__main__":
     if args.year == 2015:
         files = files + [dir2 + f for f in os.listdir(dir2) if f.endswith('.h5')]
 
-    """
+    # Check if output dir exists
+    dirCheckList = ['../outputs', '../outputs/2009', '../outputs/2015']
+    for directory in dirCheckList:
+        if not os.path.isdir(directory):
+            os.mkdir(directory)
+
+    # Process all the LVIS files and write a DEM of a single flight line into the output dir
     for file in files:
         gc.collect()
         print('Processing file: ', file)
         # Read in LVIS data within the area of interest
-        dem = lvis_to_DEM(file, minX=264.0, minY=-80.45, maxX=286.2, maxY=-73.4, setElev=True, res=args.resolution)
+        dem = lvis_to_DEM(file, minX=253.0, minY=-75.8, maxX=282.3, maxY=-74.7, setElev=True, res=args.resolution)
 
         # If there is data in the ROI, then process it.
         if dem.data_present:
@@ -72,7 +78,6 @@ if __name__ == "__main__":
             py = psutil.Process(pid)
             memoryUse = py.memory_info()[0] / 2. ** 30  # memory use in GB
             print('memory use:', str(memoryUse)[0:5], 'GB')
-        """
 
 
     smooth_dem = DEM_merge(args.year, args.resolution)

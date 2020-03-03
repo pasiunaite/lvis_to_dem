@@ -13,3 +13,4 @@ dependencies:
 - rasterio
 - lxml
 - astropy
+- scikit-image
