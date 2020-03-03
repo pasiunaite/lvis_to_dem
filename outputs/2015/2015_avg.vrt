@@ -1,0 +1,359 @@
+<VRTDataset rasterXSize="1555" rasterYSize="6049">
+  <SRS dataAxisToSRSAxisMapping="1,2">PROJCS["WGS 84 / Antarctic Polar Stereographic",GEOGCS["WGS 84",DATUM["WGS_1984",SPHEROID["WGS 84",6378137,298.257223563,AUTHORITY["EPSG","7030"]],AUTHORITY["EPSG","6326"]],PRIMEM["Greenwich",0,AUTHORITY["EPSG","8901"]],UNIT["degree",0.0174532925199433,AUTHORITY["EPSG","9122"]],AUTHORITY["EPSG","4326"]],PROJECTION["Polar_Stereographic"],PARAMETER["latitude_of_origin",-71],PARAMETER["central_meridian",0],PARAMETER["false_easting",0],PARAMETER["false_northing",0],UNIT["metre",1,AUTHORITY["EPSG","9001"]],AXIS["Easting",NORTH],AXIS["Northing",NORTH],AUTHORITY["EPSG","3031"]]</SRS>
+  <GeoTransform> -1.6718337013379356e+06,  1.0000000000000000e+02,  0.0000000000000000e+00,  2.0448344865708926e+05,  0.0000000000000000e+00, -1.0000000000000000e+02</GeoTransform>
+  <VRTRasterBand dataType="Float32" band="1" subClass="VRTDerivedRasterBand">
+    <PixelFunctionType>average</PixelFunctionType><PixelFunctionLanguage>Python</PixelFunctionLanguage><PixelFunctionCode><![CDATA[
+import numpy as np
+def average(in_ar, out_ar, xoff, yoff, xsize, ysize, raster_xsize,raster_ysize, buf_radius, gt, **kwargs):
+    x = np.ma.masked_equal(in_ar, -999)
+    np.mean(x, axis = 0, out = out_ar, dtype = 'Float32')
+    mask = np.all(x.mask, axis = 0)
+    out_ar[mask]=-999
+        ]]></PixelFunctionCode><NoDataValue>-999</NoDataValue>
+    <ColorInterp>Gray</ColorInterp>
+    <ComplexSource resampling="cubic">
+      <SourceFilename relativeToVRT="1">./043439_dem.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="417" RasterYSize="156" DataType="Float32" BlockXSize="417" BlockYSize="4"/>
+      <SrcRect xOff="0" yOff="0" xSize="417" ySize="156"/>
+      <DstRect xOff="19.8888840656797" yOff="1229.3986617844" xSize="417" ySize="156"/>
+      <NODATA>-999</NODATA>
+    </ComplexSource>
+    <ComplexSource resampling="cubic">
+      <SourceFilename relativeToVRT="1">./055228_dem.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="1059" RasterYSize="484" DataType="Float32" BlockXSize="1059" BlockYSize="1"/>
+      <SrcRect xOff="0" yOff="0" xSize="1059" ySize="484"/>
+      <DstRect xOff="0" yOff="1843.37185381241" xSize="1059" ySize="484"/>
+      <NODATA>-999</NODATA>
+    </ComplexSource>
+    <ComplexSource resampling="cubic">
+      <SourceFilename relativeToVRT="1">./055462_dem.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="784" RasterYSize="183" DataType="Float32" BlockXSize="784" BlockYSize="2"/>
+      <SrcRect xOff="0" yOff="0" xSize="784" ySize="183"/>
+      <DstRect xOff="430.253830445698" yOff="1366.61830846539" xSize="784" ySize="183"/>
+      <NODATA>-999</NODATA>
+    </ComplexSource>
+    <ComplexSource resampling="cubic">
+      <SourceFilename relativeToVRT="1">./056051_dem.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="190" RasterYSize="1753" DataType="Float32" BlockXSize="190" BlockYSize="10"/>
+      <SrcRect xOff="0" yOff="0" xSize="190" ySize="1753"/>
+      <DstRect xOff="887.478076235449" yOff="2315.90805075181" xSize="190" ySize="1753"/>
+      <NODATA>-999</NODATA>
+    </ComplexSource>
+    <ComplexSource resampling="cubic">
+      <SourceFilename relativeToVRT="1">./056419_dem.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="127" RasterYSize="1366" DataType="Float32" BlockXSize="127" BlockYSize="16"/>
+      <SrcRect xOff="0" yOff="0" xSize="127" ySize="1366"/>
+      <DstRect xOff="1118.78567711558" yOff="2899.50323432492" xSize="127" ySize="1366"/>
+      <NODATA>-999</NODATA>
+    </ComplexSource>
+    <ComplexSource resampling="cubic">
+      <SourceFilename relativeToVRT="1">./056890_dem.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="296" RasterYSize="1005" DataType="Float32" BlockXSize="296" BlockYSize="6"/>
+      <SrcRect xOff="0" yOff="0" xSize="296" ySize="1005"/>
+      <DstRect xOff="636.046823030058" yOff="4067.79066844037" xSize="296" ySize="1005"/>
+      <NODATA>-999</NODATA>
+    </ComplexSource>
+    <ComplexSource resampling="cubic">
+      <SourceFilename relativeToVRT="1">./057119_dem.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="264" RasterYSize="1784" DataType="Float32" BlockXSize="264" BlockYSize="7"/>
+      <SrcRect xOff="0" yOff="0" xSize="264" ySize="1784"/>
+      <DstRect xOff="961.547114777272" yOff="4265.30551900386" xSize="264" ySize="1784"/>
+      <NODATA>-999</NODATA>
+    </ComplexSource>
+    <ComplexSource resampling="cubic">
+      <SourceFilename relativeToVRT="1">./058064_dem.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="169" RasterYSize="1720" DataType="Float32" BlockXSize="169" BlockYSize="12"/>
+      <SrcRect xOff="0" yOff="0" xSize="169" ySize="1720"/>
+      <DstRect xOff="762.52116220243" yOff="2526.67673945515" xSize="169" ySize="1720"/>
+      <NODATA>-999</NODATA>
+    </ComplexSource>
+    <ComplexSource resampling="cubic">
+      <SourceFilename relativeToVRT="1">./058236_dem.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="169" RasterYSize="1831" DataType="Float32" BlockXSize="169" BlockYSize="12"/>
+      <SrcRect xOff="0" yOff="0" xSize="169" ySize="1831"/>
+      <DstRect xOff="876.414416507587" yOff="4132.26398555535" xSize="169" ySize="1831"/>
+      <NODATA>-999</NODATA>
+    </ComplexSource>
+    <ComplexSource resampling="cubic">
+      <SourceFilename relativeToVRT="1">./058807_dem.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="323" RasterYSize="1164" DataType="Float32" BlockXSize="323" BlockYSize="6"/>
+      <SrcRect xOff="0" yOff="0" xSize="323" ySize="1164"/>
+      <DstRect xOff="808.82193381465" yOff="1953.6429896755" xSize="323" ySize="1164"/>
+      <NODATA>-999</NODATA>
+    </ComplexSource>
+    <ComplexSource resampling="cubic">
+      <SourceFilename relativeToVRT="1">./059044_dem.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="156" RasterYSize="1573" DataType="Float32" BlockXSize="156" BlockYSize="13"/>
+      <SrcRect xOff="0" yOff="0" xSize="156" ySize="1573"/>
+      <DstRect xOff="1023.79839256946" yOff="2563.15901993764" xSize="156" ySize="1573"/>
+      <NODATA>-999</NODATA>
+    </ComplexSource>
+    <ComplexSource resampling="cubic">
+      <SourceFilename relativeToVRT="1">./059744_dem.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="548" RasterYSize="1234" DataType="Float32" BlockXSize="548" BlockYSize="3"/>
+      <SrcRect xOff="0" yOff="0" xSize="548" ySize="1234"/>
+      <DstRect xOff="666.074533611564" yOff="1331.40561142758" xSize="548" ySize="1234"/>
+      <NODATA>-999</NODATA>
+    </ComplexSource>
+    <ComplexSource resampling="cubic">
+      <SourceFilename relativeToVRT="1">./059880_dem.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="147" RasterYSize="1468" DataType="Float32" BlockXSize="147" BlockYSize="13"/>
+      <SrcRect xOff="0" yOff="0" xSize="147" ySize="1468"/>
+      <DstRect xOff="878.504899200974" yOff="3116.55326920061" xSize="147" ySize="1468"/>
+      <NODATA>-999</NODATA>
+    </ComplexSource>
+    <ComplexSource resampling="cubic">
+      <SourceFilename relativeToVRT="1">./060191_dem.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="1130" RasterYSize="240" DataType="Float32" BlockXSize="1130" BlockYSize="1"/>
+      <SrcRect xOff="0" yOff="0" xSize="1130" ySize="240"/>
+      <DstRect xOff="66.6196918398444" yOff="3546.74083538466" xSize="1130" ySize="240"/>
+      <NODATA>-999</NODATA>
+    </ComplexSource>
+    <ComplexSource resampling="cubic">
+      <SourceFilename relativeToVRT="1">./060580_dem.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="308" RasterYSize="1239" DataType="Float32" BlockXSize="308" BlockYSize="6"/>
+      <SrcRect xOff="0" yOff="0" xSize="308" ySize="1239"/>
+      <DstRect xOff="718.087078349709" yOff="3860.29885589769" xSize="308" ySize="1239"/>
+      <NODATA>-999</NODATA>
+    </ComplexSource>
+    <ComplexSource resampling="cubic">
+      <SourceFilename relativeToVRT="1">./060717_dem.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="182" RasterYSize="1895" DataType="Float32" BlockXSize="182" BlockYSize="11"/>
+      <SrcRect xOff="0" yOff="0" xSize="182" ySize="1895"/>
+      <DstRect xOff="504.633184988212" yOff="1939.05271906142" xSize="182" ySize="1895"/>
+      <NODATA>-999</NODATA>
+    </ComplexSource>
+    <ComplexSource resampling="cubic">
+      <SourceFilename relativeToVRT="1">./060942_dem.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="123" RasterYSize="45" DataType="Float32" BlockXSize="123" BlockYSize="16"/>
+      <SrcRect xOff="0" yOff="0" xSize="123" ySize="45"/>
+      <DstRect xOff="1191.87629391704" yOff="3765.82683695029" xSize="123" ySize="45"/>
+      <NODATA>-999</NODATA>
+    </ComplexSource>
+    <ComplexSource resampling="cubic">
+      <SourceFilename relativeToVRT="1">./061585_dem.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="320" RasterYSize="1460" DataType="Float32" BlockXSize="320" BlockYSize="6"/>
+      <SrcRect xOff="0" yOff="0" xSize="320" ySize="1460"/>
+      <DstRect xOff="313.051416304836" yOff="3832.25026200806" xSize="320" ySize="1460"/>
+      <NODATA>-999</NODATA>
+    </ComplexSource>
+    <ComplexSource resampling="cubic">
+      <SourceFilename relativeToVRT="1">./061728_dem.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="164" RasterYSize="1751" DataType="Float32" BlockXSize="164" BlockYSize="12"/>
+      <SrcRect xOff="0" yOff="0" xSize="164" ySize="1751"/>
+      <DstRect xOff="867.773408017752" yOff="2111.87265006368" xSize="164" ySize="1751"/>
+      <NODATA>-999</NODATA>
+    </ComplexSource>
+    <ComplexSource resampling="cubic">
+      <SourceFilename relativeToVRT="1">./062488_dem.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="323" RasterYSize="1442" DataType="Float32" BlockXSize="323" BlockYSize="6"/>
+      <SrcRect xOff="0" yOff="0" xSize="323" ySize="1442"/>
+      <DstRect xOff="872.79031303864" yOff="1919.50221630645" xSize="323" ySize="1442"/>
+      <NODATA>-999</NODATA>
+    </ComplexSource>
+    <ComplexSource resampling="cubic">
+      <SourceFilename relativeToVRT="1">./062827_dem.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="157" RasterYSize="1584" DataType="Float32" BlockXSize="157" BlockYSize="13"/>
+      <SrcRect xOff="0" yOff="0" xSize="157" ySize="1584"/>
+      <DstRect xOff="609.962748625523" yOff="3174.43416731115" xSize="157" ySize="1584"/>
+      <NODATA>-999</NODATA>
+    </ComplexSource>
+    <ComplexSource resampling="cubic">
+      <SourceFilename relativeToVRT="1">./063494_dem.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="148" RasterYSize="1469" DataType="Float32" BlockXSize="148" BlockYSize="13"/>
+      <SrcRect xOff="0" yOff="0" xSize="148" ySize="1469"/>
+      <DstRect xOff="929.861031481104" yOff="3360.71215971964" xSize="148" ySize="1469"/>
+      <NODATA>-999</NODATA>
+    </ComplexSource>
+    <ComplexSource resampling="cubic">
+      <SourceFilename relativeToVRT="1">./063528_dem.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="400" RasterYSize="1299" DataType="Float32" BlockXSize="400" BlockYSize="5"/>
+      <SrcRect xOff="0" yOff="0" xSize="400" ySize="1299"/>
+      <DstRect xOff="656.993347459231" yOff="1927.62005138775" xSize="400" ySize="1299"/>
+      <NODATA>-999</NODATA>
+    </ComplexSource>
+    <ComplexSource resampling="cubic">
+      <SourceFilename relativeToVRT="1">./064194_dem.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="370" RasterYSize="1568" DataType="Float32" BlockXSize="370" BlockYSize="5"/>
+      <SrcRect xOff="0" yOff="0" xSize="370" ySize="1568"/>
+      <DstRect xOff="683.180436192863" yOff="3542.58315676134" xSize="370" ySize="1568"/>
+      <NODATA>-999</NODATA>
+    </ComplexSource>
+    <ComplexSource resampling="cubic">
+      <SourceFilename relativeToVRT="1">./064678_dem.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="413" RasterYSize="1883" DataType="Float32" BlockXSize="413" BlockYSize="4"/>
+      <SrcRect xOff="0" yOff="0" xSize="413" ySize="1883"/>
+      <DstRect xOff="1142.14588105394" yOff="3525.27304306407" xSize="413" ySize="1883"/>
+      <NODATA>-999</NODATA>
+    </ComplexSource>
+    <ComplexSource resampling="cubic">
+      <SourceFilename relativeToVRT="1">./064932_dem.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="160" RasterYSize="1585" DataType="Float32" BlockXSize="160" BlockYSize="12"/>
+      <SrcRect xOff="0" yOff="0" xSize="160" ySize="1585"/>
+      <DstRect xOff="519.809626285438" yOff="3225.49736194053" xSize="160" ySize="1585"/>
+      <NODATA>-999</NODATA>
+    </ComplexSource>
+    <ComplexSource resampling="cubic">
+      <SourceFilename relativeToVRT="1">./065300_dem.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="390" RasterYSize="1854" DataType="Float32" BlockXSize="390" BlockYSize="5"/>
+      <SrcRect xOff="0" yOff="0" xSize="390" ySize="1854"/>
+      <DstRect xOff="774.068805496341" yOff="1692.29816626078" xSize="390" ySize="1854"/>
+      <NODATA>-999</NODATA>
+    </ComplexSource>
+    <ComplexSource resampling="cubic">
+      <SourceFilename relativeToVRT="1">./065632_dem.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="544" RasterYSize="1832" DataType="Float32" BlockXSize="544" BlockYSize="3"/>
+      <SrcRect xOff="0" yOff="0" xSize="544" ySize="1832"/>
+      <DstRect xOff="221.453763634765" yOff="3558.83647266719" xSize="544" ySize="1832"/>
+      <NODATA>-999</NODATA>
+    </ComplexSource>
+    <ComplexSource resampling="cubic">
+      <SourceFilename relativeToVRT="1">./066230_dem.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="281" RasterYSize="116" DataType="Float32" BlockXSize="281" BlockYSize="7"/>
+      <SrcRect xOff="0" yOff="0" xSize="281" ySize="116"/>
+      <DstRect xOff="754.792850188303" yOff="1413.11168136967" xSize="281" ySize="116"/>
+      <NODATA>-999</NODATA>
+    </ComplexSource>
+    <ComplexSource resampling="cubic">
+      <SourceFilename relativeToVRT="1">./066395_dem.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="157" RasterYSize="1535" DataType="Float32" BlockXSize="157" BlockYSize="13"/>
+      <SrcRect xOff="0" yOff="0" xSize="157" ySize="1535"/>
+      <DstRect xOff="1002.88062008412" yOff="2030.59386578967" xSize="157" ySize="1535"/>
+      <NODATA>-999</NODATA>
+    </ComplexSource>
+    <ComplexSource resampling="cubic">
+      <SourceFilename relativeToVRT="1">./066973_dem.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="260" RasterYSize="2211" DataType="Float32" BlockXSize="260" BlockYSize="7"/>
+      <SrcRect xOff="0" yOff="0" xSize="260" ySize="2211"/>
+      <DstRect xOff="252.811196974346" yOff="1350.77799888123" xSize="260" ySize="2211"/>
+      <NODATA>-999</NODATA>
+    </ComplexSource>
+    <ComplexSource resampling="cubic">
+      <SourceFilename relativeToVRT="1">./067095_dem.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="168" RasterYSize="1542" DataType="Float32" BlockXSize="168" BlockYSize="12"/>
+      <SrcRect xOff="0" yOff="0" xSize="168" ySize="1542"/>
+      <DstRect xOff="856.231067300094" yOff="3563.91384884849" xSize="168" ySize="1542"/>
+      <NODATA>-999</NODATA>
+    </ComplexSource>
+    <ComplexSource resampling="cubic">
+      <SourceFilename relativeToVRT="1">./067135_dem.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="315" RasterYSize="1842" DataType="Float32" BlockXSize="315" BlockYSize="6"/>
+      <SrcRect xOff="0" yOff="0" xSize="315" ySize="1842"/>
+      <DstRect xOff="445.744926741938" yOff="1509.64853979947" xSize="315" ySize="1842"/>
+      <NODATA>-999</NODATA>
+    </ComplexSource>
+    <ComplexSource resampling="cubic">
+      <SourceFilename relativeToVRT="1">./067808_dem.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="368" RasterYSize="1673" DataType="Float32" BlockXSize="368" BlockYSize="5"/>
+      <SrcRect xOff="0" yOff="0" xSize="368" ySize="1673"/>
+      <DstRect xOff="692.550799445105" yOff="4022.81085947933" xSize="368" ySize="1673"/>
+      <NODATA>-999</NODATA>
+    </ComplexSource>
+    <ComplexSource resampling="cubic">
+      <SourceFilename relativeToVRT="1">./067952_dem.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="244" RasterYSize="149" DataType="Float32" BlockXSize="244" BlockYSize="8"/>
+      <SrcRect xOff="0" yOff="0" xSize="244" ySize="149"/>
+      <DstRect xOff="18.4543541228632" yOff="1219.57250784398" xSize="244" ySize="149"/>
+      <NODATA>-999</NODATA>
+    </ComplexSource>
+    <ComplexSource resampling="cubic">
+      <SourceFilename relativeToVRT="1">./068023_dem.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="435" RasterYSize="2281" DataType="Float32" BlockXSize="435" BlockYSize="4"/>
+      <SrcRect xOff="0" yOff="0" xSize="435" ySize="2281"/>
+      <DstRect xOff="331.514751522229" yOff="3348.84214846488" xSize="435" ySize="2281"/>
+      <NODATA>-999</NODATA>
+    </ComplexSource>
+    <ComplexSource resampling="cubic">
+      <SourceFilename relativeToVRT="1">./069045_dem.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="202" RasterYSize="1817" DataType="Float32" BlockXSize="202" BlockYSize="10"/>
+      <SrcRect xOff="0" yOff="0" xSize="202" ySize="1817"/>
+      <DstRect xOff="717.656456532846" yOff="2210.30422228632" xSize="202" ySize="1817"/>
+      <NODATA>-999</NODATA>
+    </ComplexSource>
+    <ComplexSource resampling="cubic">
+      <SourceFilename relativeToVRT="1">./069573_dem.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="147" RasterYSize="1556" DataType="Float32" BlockXSize="147" BlockYSize="13"/>
+      <SrcRect xOff="0" yOff="0" xSize="147" ySize="1556"/>
+      <DstRect xOff="158.491356620686" yOff="2884.1461324326" xSize="147" ySize="1556"/>
+      <NODATA>-999</NODATA>
+    </ComplexSource>
+    <ComplexSource resampling="cubic">
+      <SourceFilename relativeToVRT="1">./069798_dem.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="95" RasterYSize="1681" DataType="Float32" BlockXSize="95" BlockYSize="21"/>
+      <SrcRect xOff="0" yOff="0" xSize="95" ySize="1681"/>
+      <DstRect xOff="649.671698715999" yOff="530.302513650393" xSize="95" ySize="1681"/>
+      <NODATA>-999</NODATA>
+    </ComplexSource>
+    <ComplexSource resampling="cubic">
+      <SourceFilename relativeToVRT="1">./070498_dem.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="557" RasterYSize="531" DataType="Float32" BlockXSize="557" BlockYSize="3"/>
+      <SrcRect xOff="0" yOff="0" xSize="557" ySize="531"/>
+      <DstRect xOff="121.970924667357" yOff="0" xSize="557" ySize="531"/>
+      <NODATA>-999</NODATA>
+    </ComplexSource>
+    <ComplexSource resampling="cubic">
+      <SourceFilename relativeToVRT="1">./070551_dem.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="280" RasterYSize="1572" DataType="Float32" BlockXSize="280" BlockYSize="7"/>
+      <SrcRect xOff="0" yOff="0" xSize="280" ySize="1572"/>
+      <DstRect xOff="250.728550766862" yOff="1314.39524186273" xSize="280" ySize="1572"/>
+      <NODATA>-999</NODATA>
+    </ComplexSource>
+    <ComplexSource resampling="cubic">
+      <SourceFilename relativeToVRT="1">./071851_dem.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="152" RasterYSize="1530" DataType="Float32" BlockXSize="152" BlockYSize="13"/>
+      <SrcRect xOff="0" yOff="0" xSize="152" ySize="1530"/>
+      <DstRect xOff="118.966978736937" yOff="2108.20038146823" xSize="152" ySize="1530"/>
+      <NODATA>-999</NODATA>
+    </ComplexSource>
+    <ComplexSource resampling="cubic">
+      <SourceFilename relativeToVRT="1">./072553_dem.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="42" RasterYSize="337" DataType="Float32" BlockXSize="42" BlockYSize="48"/>
+      <SrcRect xOff="0" yOff="0" xSize="42" ySize="337"/>
+      <DstRect xOff="98.7172804851527" yOff="3635.58938119679" xSize="42" ySize="337"/>
+      <NODATA>-999</NODATA>
+    </ComplexSource>
+  </VRTRasterBand>
+</VRTDataset>

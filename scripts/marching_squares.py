@@ -20,12 +20,12 @@ class ContourFinder:
 
         # Load img file
         self.filepath = filepath
-        self.original = io.imread(self.filepath, as_gray=True)
+        #self.original = io.imread(self.filepath, as_gray=True)
 
         # Load the raster
-        ds = gdal.Open("../outputs/2009.tif")
+        ds = gdal.Open("../outputs/masked_elevation_change.tif")
         self.original = np.array(ds.GetRasterBand(1).ReadAsArray())
-
+        print(self.original.shape, type(self.original))
 
         self.pen_color = "#ff0000"
         self.value = -1.0
@@ -83,7 +83,7 @@ class ContourFinder:
 
 
             # print(colorIntArray)
-            print(colorFloatArray)
+            print('Color Float Array: ', colorFloatArray)
 
             temp = io.imread(self.filepath, as_gray=False)
             #print(temp)
@@ -105,10 +105,10 @@ class ContourFinder:
 
 
 if __name__ == "__main__":
-    filepath = "test.png"
+    filepath = "../outputs/masked_elevation_change.tif"
     cf = ContourFinder(filepath)
 
-    #cf.save("result.png", cf.find(0.7), "#ff0000")
+    cf.save("result.png", cf.find(10), "#ff0000")
 
 
 
