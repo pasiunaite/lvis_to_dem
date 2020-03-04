@@ -68,21 +68,25 @@ The script also **calculates multiple glacier volume and area change metrics**, 
 Here is the **elevation change map for Pine Island Glacier from 2009 to 2015** (100 m resolution):
 
 <p align="center">
-<img src="https://github.com/edinburgh-university-OOSA/oosa-final-assignment-pasiunaite/blob/master/media/elev_change.png" width="70%" height="70%" alt="alt text">
+<img src="https://github.com/edinburgh-university-OOSA/oosa-final-assignment-pasiunaite/blob/master/media/elev_change.png" width="45%" height="45%" alt="alt text">
 </p>
 
 The **change metrics computed for Pine Island Glacier from 2009 to 2015** results:
 - -1.15 m/yr mean elevation change rate
-- -11.37 km^3/yr mean volume change rate
-- -68.23 km^3 total volume change
+- -11.37 km<sup>3</sup>/yr mean volume change rate
+- -68.23 km<sup>3</sup> total volume change
 - -58.00 Gt total mass change
 
 
 ## Task 4: add contours to the derived DEMs
+To overlay contours every 50 m over the 2009 DEM:
+```
+python3 contours.py --fn 2009.tif --spacing 50
+```
+The script creates raster contours at a user specified spacing. It iterates over each contour interval and **computes contours using the Marching Squares algorithm**. 
 
+Here are contours overlaid every 50 m to 2009 and 2015 raster and every 20 m to the elevation change map:
 <p align="center">
 <img src="https://github.com/edinburgh-university-OOSA/oosa-final-assignment-pasiunaite/blob/master/media/contour.JPG" alt="alt text">
 </p>
 
-
-Author: **Gabija Pasiunaite**
