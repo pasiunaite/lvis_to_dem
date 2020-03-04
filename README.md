@@ -85,7 +85,7 @@ python3 contours.py --fn 2009.tif --spacing 50
 ```
 The script creates raster contours at a user specified spacing. It iterates over each contour interval and **computes contours using the Marching Squares algorithm**. 
 
-Here are contours overlaid every 50 m to 2009 and 2015 raster and every 20 m to the elevation change map:
+Here are contours overlaid **every 50 m to 2009 and 2015 rasters** and **every 20 m to the elevation change map**:
 <p align="center">
 <img src="https://github.com/edinburgh-university-OOSA/oosa-final-assignment-pasiunaite/blob/master/media/contour.JPG" alt="alt text">
 </p>
