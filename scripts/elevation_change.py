@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 
 """
-Task 3: determine the elevation and total volume change between two DEMs
+Task 3: determine the elevation and total volume change between two DEMs.
 
 Author: Gabija Pasiunaite
 """
@@ -21,12 +21,9 @@ def getCmdArgs():
     Function parses command line arguments.
     :return: args: cmd arguments
     """
-    # Create an argparse object with a help comment
     parser = argparse.ArgumentParser(description="Create an elevation change map for two DEMs.")
-    # Add arguments
     parser.add_argument('--before', dest='before', type=str, default='2009', help="DEM to use as 'before' raster")
     parser.add_argument('--after', dest='after', type=str, default='2015', help="DEM to use as 'after' raster")
-    # Parse arguments
     args = parser.parse_args()
     return args
 
@@ -63,11 +60,10 @@ class Change_Detection:
         # Write the geotiff
         iolib.writeGTiff(self.diff, '../outputs/elevation_change.tif', self.dem1)
 
-        # Mask areas that do not belong to the glacier
-        # Create binary mask from polygon shapefile to match our warped raster datasets
+        # Mask areas that do not belong to the glacier by creating a binary mask from polygon shapefile to match our warped raster datasets
         glacier_mask = geolib.shp2array(self.glacier_shp, self.dem2)
 
-        # Now apply the mask to ethe difference array
+        # Now apply the mask to the difference array
         self.diff = np.ma.array(self.diff, mask=glacier_mask)
         iolib.writeGTiff(self.diff, '../outputs/glacier_elevation_change.tif', self.dem1)
         return
@@ -127,7 +123,9 @@ class Change_Detection:
 
 if __name__ == "__main__":
     cmd_args = getCmdArgs()
+    # Initialize Change Detection class object with the two DEMs
     change = Change_Detection(before=cmd_args.before, after=cmd_args.after)
+    # Produce elevation change map and compute change metrics.
     change.elevation_change()
     change.volume_change()
     change.plot_change()

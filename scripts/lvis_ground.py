@@ -1,31 +1,22 @@
 #!/usr/bin/python3
 
 """
-Some example functions for processing LVIS data.
+Functions for extracting elevation data from LVIS waveforms.
 Author: Steven Hancock.
 """
 
 import os
+import gc
 import psutil
 import numpy as np
-import pandas as pd
 from lvis_data import lvisData
 from pyproj import Proj, transform
-from matplotlib import pyplot as plt
 from scipy.ndimage.filters import gaussian_filter1d
-import gc
 
 
 class lvisGround(lvisData):
     """
     LVIS class with extra processing steps
-    """
-
-    """
-    def __init__(self, filename, minX=-100000000, maxX=100000000, minY=-1000000000, maxY=100000000,
-                 setElev=False, onlyBounds=False):
-        lvisData.__init__(self, filename, minX=minX, minY=minY, maxX=maxX, maxY=maxY, setElev=setElev,
-                          onlyBounds=onlyBounds)
     """
 
     def estimateGround(self, threshScale=5, statsLen=10, minWidth=3, smooWidth=0.5):

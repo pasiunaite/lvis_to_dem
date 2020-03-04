@@ -20,11 +20,15 @@ from lvis_ground import lvisGround
 
 
 class lvis_to_DEM(lvisGround):
+    """
+    Class for processing a single LVIS flightine to a DEM. Inherits waveform processing methods from the
+    parent lvisGroud class.
+    """
 
     def __init__(self, filename, minX=-100000000, maxX=100000000, minY=-1000000000, maxY=100000000,
                  setElev=False, onlyBounds=False, res=100.0):
         """
-        Calls child contructor to initialize lvis params and some class attributes.
+        Calls the parent constructor to initialize lvis params and some class attributes.
         """
         lvisGround.__init__(self, filename, minX=minX, minY=minY, maxX=maxX, maxY=maxY, setElev=setElev,
                           onlyBounds=onlyBounds)
@@ -59,13 +63,11 @@ class lvis_to_DEM(lvisGround):
         :param filename: output file name
         :param epsg:     EPSG projection
         """
-        # Raster -> GeoTiff
-        # set geolocation information (note geotiffs count down from top edge in Y)
+        # Raster -> GeoTiff: set geolocation information (note geotiffs count down from top edge in Y)
         geotransform = (np.min(self.lon), self.res, 0, np.max(self.lat), 0, -self.res)
 
         # load data in to geotiff object
-        dst_ds = gdal.GetDriverByName('GTiff').Create('../outputs/' + filename,
-                                                      self.nX, self.nY, 1, gdal.GDT_Float32)
+        dst_ds = gdal.GetDriverByName('GTiff').Create('../outputs/' + filename, self.nX, self.nY, 1, gdal.GDT_Float32)
         dst_ds.SetGeoTransform(geotransform)  # specify coords
         srs = osr.SpatialReference()  # establish encoding
         srs.ImportFromEPSG(epsg)  # WGS84 lat/long
@@ -95,7 +97,7 @@ class lvis_to_DEM(lvisGround):
 
     def gapfill(self):
         """
-        Fill the missing data gaps in the fligh line using Rasterio's fillnodata module.
+        Fill the missing data gaps in the flight line using Rasterio's fillnodata module.
         The algorithm uses weighted average to estimate the pixel value (search radius was set to 5 pixels).
         No smoothing was applied.
         """

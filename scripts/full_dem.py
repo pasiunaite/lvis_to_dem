@@ -22,12 +22,9 @@ def getCmdArgs():
     Function parses command line arguments.
     :return: args: cmd arguments
     """
-    # Create an argparse object with a help comment
     parser = argparse.ArgumentParser(description="Create a DEM from a specified file of any chosen resolution.")
-    # Add arguments
     parser.add_argument('--y', dest='year', type=int, default=2015, help='Year of the data collection: 2009 or 2015')
     parser.add_argument('--res', dest='resolution', type=int, default=100.0, help="DEM resolution")
-    # Parse arguments
     args = parser.parse_args()
     return args
 
@@ -48,7 +45,7 @@ if __name__ == "__main__":
     if args.year == 2015:
         files = files + [dir2 + f for f in os.listdir(dir2) if f.endswith('.h5')]
 
-    # Check if output dir exists
+    # Check if output dir exists, if not then create it
     dirCheckList = ['../outputs', '../outputs/2009', '../outputs/2015']
     for directory in dirCheckList:
         if not os.path.isdir(directory):
@@ -82,6 +79,7 @@ if __name__ == "__main__":
     # Merge all the processed flightlines from that year into a single tif and fill the gaps
     smooth_dem = DEM_merge(args.year, args.resolution)
     smooth_dem.merge_tiles()
+
     # Apply Gaussian smoothing to get rid of the artefacts
     smooth_dem.gaussian_blur()
     smooth_dem.plot_dem(str(args.year) + '.tif')
