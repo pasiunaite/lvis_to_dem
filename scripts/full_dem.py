@@ -10,11 +10,11 @@ Author: Gabija Pasiunaite
 """
 
 import os
+import gc
 import psutil
 import argparse
 import timeit
 from dem import lvis_to_DEM, DEM_merge
-import gc
 
 
 def getCmdArgs():
@@ -54,7 +54,6 @@ if __name__ == "__main__":
         if not os.path.isdir(directory):
             os.mkdir(directory)
 
-
     # Process all the LVIS files and write a DEM of a single flight line into the output dir
     for file in files:
         gc.collect()
@@ -78,6 +77,7 @@ if __name__ == "__main__":
             py = psutil.Process(pid)
             memoryUse = py.memory_info()[0] / 2. ** 30  # memory use in GB
             print('memory use:', str(memoryUse)[0:5], 'GB')
+
 
     # Merge all the processed flightlines from that year into a single tif and fill the gaps
     smooth_dem = DEM_merge(args.year, args.resolution)

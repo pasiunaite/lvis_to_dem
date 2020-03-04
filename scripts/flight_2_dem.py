@@ -12,7 +12,6 @@ Author: Gabija Pasiunaite
 
 import timeit
 import argparse
-from lvis_ground import lvisGround
 from dem import lvis_to_DEM
 
 

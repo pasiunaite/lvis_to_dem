@@ -7,9 +7,10 @@ Author: Gabija Pasiunaite
 """
 
 import os
-import numpy as np
 import argparse
-from handleTiff import tiffHandle
+import rasterio
+import numpy as np
+from matplotlib import pyplot as plt
 
 os.system("pip install pygeotools")
 from pygeotools.lib import iolib, warplib, geolib, timelib, malib
@@ -36,7 +37,6 @@ class Change_Detection:
         """
         Class constructor.
         """
-        self.tiff_handler = tiffHandle()
         dem1_dir = '../outputs/' + before + '.tif'
         dem2_dir = '../outputs/' + after + '.tif'
 
@@ -109,9 +109,25 @@ class Change_Detection:
         print('%0.2f Gt/yr mean mass change rate' % mass_rate)
         print('%0.2f Gt total mass change\n' % mass_total)
 
+    def plot_change(self):
+        """
+        Helper function to plot resulting DEM.
+        :param filename: name of file to plot.
+        """
+        src = rasterio.open("../outputs/glacier_elevation_change.tif")
+        ax = plt.figure(1, figsize=[10, 9])
+        im = plt.imshow(src.read(1), vmin=-30, vmax=30, cmap='RdBu')
+        plt.title('2009 to 2015')
+        ax.colorbar(im, fraction=0.046, pad=0.04, label='Elevation Change (m)', shrink=0.7)
+        axs = plt.gca()
+        axs.set_facecolor('0.7')
+        plt.show()
+        return
+
 
 if __name__ == "__main__":
     cmd_args = getCmdArgs()
     change = Change_Detection(before=cmd_args.before, after=cmd_args.after)
     change.elevation_change()
     change.volume_change()
+    change.plot_change()

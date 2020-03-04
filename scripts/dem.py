@@ -86,9 +86,10 @@ class lvis_to_DEM(lvisGround):
         """
         src = rasterio.open("../outputs/" + filename)
         ax = plt.figure(1, figsize=[10, 9])
-        print(np.max(self.zG), np.min(self.zG))
-        im = plt.imshow(src.read(1), vmin=400, vmax=np.max(self.zG))
+        im = plt.imshow(src.read(1), vmin=50, vmax=1100, cmap='Spectral_r')
         ax.colorbar(im, fraction=0.046, pad=0.04, label='Elevation (m)', shrink=0.7)
+        axs = plt.gca()
+        axs.set_facecolor('0.7')
         plt.show()
         return
 
@@ -238,8 +239,11 @@ def gaussian_blur(in_ar, out_ar, xoff, yoff, xsize, ysize, raster_xsize, raster_
         """
         src = rasterio.open("../outputs/" + filename)
         ax = plt.figure(1, figsize=[10, 9])
-        im = plt.imshow(src.read(1), vmin=50, vmax=1200)
+        im = plt.imshow(src.read(1), vmin=50, vmax=1100, cmap='Spectral_r')
         ax.colorbar(im, fraction=0.046, pad=0.04, label='Elevation (m)', shrink=0.7)
+        axs = plt.gca()
+        axs.set_facecolor('0.7')
+        plt.title(filename[0:-4])
         plt.show()
         return
 
