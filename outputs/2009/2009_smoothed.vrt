@@ -9,7 +9,6 @@ from astropy.convolution import convolve_fft
 
 def gaussian_blur(in_ar, out_ar, xoff, yoff, xsize, ysize, raster_xsize, raster_ysize, buf_radius, gt, **kwargs):
     size = 5
-    print(xsize, ysize, xoff, yoff)
     raster = np.array(in_ar[0])
     raster[raster == -999.0] = np.nan
     # expand in_array to fit edge of kernel

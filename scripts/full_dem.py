@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 
 """
-Task 2: create a gap-filled DEM from all the 2015 data
+Task 2: create gap-filled DEMs from all the 2009 and 2015 data.
 
 The script also has a cmd parser to change the resolution, flight year and the output DEM name.
 Pine Island Glacier bounding box was set to the following lats and longs: [-74, 97; -75.7, 104]
@@ -54,6 +54,7 @@ if __name__ == "__main__":
         if not os.path.isdir(directory):
             os.mkdir(directory)
 
+
     # Process all the LVIS files and write a DEM of a single flight line into the output dir
     for file in files:
         gc.collect()
@@ -71,18 +72,19 @@ if __name__ == "__main__":
             dem.points_to_raster()
             dem.gapfill()
             dem.write_tiff(filename=full_fn)
-            # dem.plot_dem(filename=full_fn)
 
-            # ---- RAM -----
+            # Check RAM usage as files are being processed
             pid = os.getpid()
             py = psutil.Process(pid)
             memoryUse = py.memory_info()[0] / 2. ** 30  # memory use in GB
             print('memory use:', str(memoryUse)[0:5], 'GB')
 
-
+    # Merge all the processed flightlines from that year into a single tif and fill the gaps
     smooth_dem = DEM_merge(args.year, args.resolution)
     smooth_dem.merge_tiles()
+    # Apply Gaussian smoothing to get rid of the artefacts
     smooth_dem.gaussian_blur()
+    smooth_dem.plot_dem(str(args.year) + '.tif')
 
     stop = timeit.default_timer()
     print('Processing time: ' + str((stop - start) / 60.0) + ' min')

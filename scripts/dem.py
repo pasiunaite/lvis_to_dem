@@ -86,10 +86,9 @@ class lvis_to_DEM(lvisGround):
         """
         src = rasterio.open("../outputs/" + filename)
         ax = plt.figure(1, figsize=[10, 9])
-        #self.elev[self.elev == -999.0] = np.nan
         print(np.max(self.zG), np.min(self.zG))
         im = plt.imshow(src.read(1), vmin=400, vmax=np.max(self.zG))
-        ax.colorbar(im, fraction=0.046, pad=0.04)
+        ax.colorbar(im, fraction=0.046, pad=0.04, label='Elevation (m)', shrink=0.7)
         plt.show()
         return
 
@@ -161,7 +160,7 @@ def average(in_ar, out_ar, xoff, yoff, xsize, ysize, raster_xsize,raster_ysize, 
         os.system(merge_cmd)
 
         # Fill the gaps
-        gap_fill_cmd = "gdal_fillnodata.py -md 100 -nomask -si 1 " + self.year + "_merged.tif " + \
+        gap_fill_cmd = "gdal_fillnodata.py -md 50 -nomask -si 1 " + self.year + "_merged.tif " + \
                        self.year + "_filled.tif"
         print('Filling gaps in the data')
         os.system(gap_fill_cmd)
@@ -206,7 +205,6 @@ from astropy.convolution import convolve_fft
 
 def gaussian_blur(in_ar, out_ar, xoff, yoff, xsize, ysize, raster_xsize, raster_ysize, buf_radius, gt, **kwargs):
     size = """ + str(kernel) + """
-    print(xsize, ysize, xoff, yoff)
     raster = np.array(in_ar[0])
     raster[raster == -999.0] = np.nan
     # expand in_array to fit edge of kernel
@@ -231,6 +229,18 @@ def gaussian_blur(in_ar, out_ar, xoff, yoff, xsize, ysize, raster_xsize, raster_
 
         # Go back to the main working directory
         os.chdir(r"../../scripts")
+        return
+
+    def plot_dem(self, filename="2009.tif"):
+        """
+        Helper function to plot resulting DEM.
+        :param filename: name of file to plot.
+        """
+        src = rasterio.open("../outputs/" + filename)
+        ax = plt.figure(1, figsize=[10, 9])
+        im = plt.imshow(src.read(1), vmin=50, vmax=1200)
+        ax.colorbar(im, fraction=0.046, pad=0.04, label='Elevation (m)', shrink=0.7)
+        plt.show()
         return
 
 
