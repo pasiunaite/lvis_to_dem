@@ -7,7 +7,7 @@ The script contains ContourFinder class which holds methods for creating raster 
 Currently, two implementations of the method exist. Both of them use the Marching Squares algorithm.
 
 The first one, contour(), iterates over each contour interval and uses skimage's implementation of the
-Marching Square's algorithm to compute the contours.
+Marching Squares algorithm to compute the contours.
 
 The second one, contour_trial(), is my attempt to write the Marching Squares algorithm. It does return the computed
 vertices of each contour but I would not recommend using it because it is super slow.

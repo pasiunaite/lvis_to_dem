@@ -48,7 +48,7 @@ To produce a 100 m resolution DEM for 2009:
 ```
 python3 full_dem.py --y 2009 --res 100
 ```
-The script processes all the flight lines that fall within the area of interest for the specified year. In order to minimize RAM usage, it saves the intermediate GeoTiffs to disc. Once all the flight lines are processed, it **merges all the DEMs** into one by building a virtual raster using GDAL and averaging overlapping pixels. **No data values are filled by interpolating** (max distance of 50 pixels was specified). **A Gaussian filter is then applied** to smooth out the gap-filled DEM. The resulting file is then written to YEAR.tif file. A kernel for the Gaussian filtering is automatically selected depending on the resolution, typically 3x3, 5x5 or 10x10.
+The script processes all the flight lines that fall within the area of interest for the specified year into a single DEM. In order to minimize RAM usage, it saves the intermediate GeoTiffs to disc. Once all the flight lines are processed, it **merges all the DEMs** into one by building a virtual raster using GDAL and averaging overlapping pixels. **No data values are filled by interpolating** (max distance of 50 pixels was specified). **A Gaussian filter is then applied** to smooth out the gap-filled DEM. The resulting file is then written to YEAR.tif file. A kernel for the Gaussian filtering is automatically selected depending on the resolution, typically 3x3, 5x5 or 10x10.
 
 Please note that depending on the number of inputs, the script might take a couple of hours to run. The resulting 100 m resolution DEMs for 2009 and 2015 are illustrated below:
 

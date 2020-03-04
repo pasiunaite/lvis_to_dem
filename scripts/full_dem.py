@@ -3,8 +3,11 @@
 """
 Task 2: create gap-filled DEMs from all the 2009 and 2015 data.
 
-The script also has a cmd parser to change the resolution, flight year and the output DEM name.
-Pine Island Glacier bounding box was set to the following lats and longs: [-74, 97; -75.7, 104]
+The script processes all the flight lines that fall within the area of interest for the specified year into a single DEM.
+In order to minimize RAM usage, it saves the intermediate GeoTiffs to disc. Once all the flight lines are processed,
+it merges all the DEMs into one by building a virtual raster using GDAL and averaging overlapping pixels.
+No data values are filled by interpolating (max distance of 50 pixels was specified).
+A Gaussian filter is then applied to smooth out the gap-filled DEM. The resulting file is then written to YEAR.tif file.
 
 Author: Gabija Pasiunaite
 """
