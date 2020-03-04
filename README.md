@@ -22,14 +22,36 @@ conda activate lvis
 
 ## Task 1: create a DEM from a single LVIS flight line
 The script also has a cmd parser to change the resolution, flighline file and the output DEM name.
+
 Pine Island Glacier bounding box was set to the following lats and longs: [-74, 97; -75.7, 104]
+
+To produce a 10 m resolution DEM for a single flight line:
+```
+python3 flight_2_dem.py
+```
+
+<p align="center">
+<img src="https://github.com/edinburgh-university-OOSA/oosa-final-assignment-pasiunaite/blob/master/media/flight_to_dem.png" alt="alt text">
+</p>
 
 ## Task 2: create gap-filled DEMs for 2009 and 2015
 
 The script also has a cmd parser to change the resolution, flight year and the output DEM name.
 Pine Island Glacier bounding box was set to the following lats and longs: [-74, 97; -75.7, 104]
 
+To produce a 100 m resolution DEM for 2009:
+```
+python3 full_dem.py --y 2009 --res 100
+```
+The script might take a couple of hours to run. The resulting 100 m resolution DEMs for 2009 and 2015 are illustrated below. 
+
+<p align="center">
+<img src="https://github.com/edinburgh-university-OOSA/oosa-final-assignment-pasiunaite/blob/master/media/dems.JPG" alt="alt text">
+</p>
+
 ## Task 3: determine the elevation and total volume change between two DEMs
+
+
 
 ## Task 4: add contours to the derived DEMs
 
