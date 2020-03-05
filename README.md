@@ -32,7 +32,7 @@ To produce a 10 m resolution DEM for a single flight line:
 ```
 python3 flight_2_dem.py --res 10
 ```
-The script processes a single LVIS flight line into a DEM. The script also has a cmd parser to change the resolution and the flight line file. It first denoises the waveforms and identifies ground elevations by finding the center of mass of each waveform (see illustration below). It then uses the identified elevations to convert the point data to a raster. The value of each pixel is taken as a mean of all points that fall within the pixel. The resulting file is then writte to disc as a GeoTiff. 
+The script processes a single LVIS flight line into a DEM. The script also has a cmd parser to change the resolution and the flight line file. It first **denoises the waveforms and identifies ground elevations** by finding the center of mass of each waveform (see illustration below). It then uses the identified elevations to **convert the point data to a raster**. The value of each pixel is taken as a mean of all points that fall within the pixel. The resulting file is then saved as a GeoTIFF. 
 
 <p align="center">
 <img src="https://github.com/edinburgh-university-OOSA/oosa-final-assignment-pasiunaite/blob/master/media/signal.png" width="40%" height="40%" alt="alt text">
@@ -48,7 +48,7 @@ To produce a 100 m resolution DEM for 2009:
 ```
 python3 full_dem.py --y 2009 --res 100
 ```
-The script processes all the flight lines that fall within the area of interest for the specified year into a single DEM. In order to minimize RAM usage, it saves the intermediate GeoTiffs to disc. Once all the flight lines are processed, it **merges all the DEMs** into one by building a virtual raster using GDAL and averaging overlapping pixels. **No data values are filled by interpolating** (max distance of 50 pixels was specified). **A Gaussian filter is then applied** to smooth out the gap-filled DEM. The resulting file is then written to YEAR.tif file. A kernel for the Gaussian filtering is automatically selected depending on the resolution, typically 3x3, 5x5 or 10x10.
+The script processes all the flight lines that fall within the area of interest for the specified year into a single DEM. In order to minimize RAM usage, it saves the intermediate GeoTiffs to disc. Once all the flight lines are processed, it **merges all the DEMs** into one by building a virtual raster using GDAL and averaging overlapping pixels. **No data values are filled by interpolating** (max distance of 50 pixels was specified). **A Gaussian filter is then applied** to smooth out the gap-filled DEM. The resulting raster is then written to a YEAR.tif file. A kernel for the Gaussian filtering is automatically selected depending on the resolution, typically 3x3, 5x5 or 10x10.
 
 Please note that depending on the number of inputs, the script might take a couple of hours to run. The resulting 100 m resolution DEMs for 2009 and 2015 are illustrated below:
 
@@ -61,7 +61,7 @@ To produce an elevation change map from 2009 to 2015:
 ```
 python3 full_dem.py --before 2009 --after 2015
 ```
-The script processes two DEMs from different dates to create an elevation change map. First, it **preprocesses both input datasets to a common projection, extent and resolution**. Then it **differences** the preprocessed after and before rasters to create an elevation change map which is then written to disc as a GeoTiff. 
+The script processes two DEMs from different dates to create an elevation change map. First, it **preprocesses both input datasets to a common projection, extent and resolution**. Then it **differences** the preprocessed after and before rasters to create an elevation change map which is then saved to memory as a GeoTIFF. 
 
 The script also **calculates multiple glacier volume and area change metrics**, such as mean elevation change rate, total area, total volume change and mass change.
 
@@ -71,7 +71,7 @@ Here is the **elevation change map for Pine Island Glacier from 2009 to 2015** (
 <img src="https://github.com/edinburgh-university-OOSA/oosa-final-assignment-pasiunaite/blob/master/media/elev_change.png" width="45%" height="45%" alt="alt text">
 </p>
 
-The **change metrics computed for Pine Island Glacier from 2009 to 2015** results:
+The **change metrics computed for the Pine Island Glacier from 2009 to 2015** results:
 - -1.15 m/yr mean elevation change rate
 - -11.37 km<sup>3</sup>/yr mean volume change rate
 - -68.23 km<sup>3</sup> total volume change
