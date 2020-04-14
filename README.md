@@ -40,7 +40,7 @@ The script processes a single LVIS flight line into a DEM. The script also has a
 
 Here is a resulting 10 m resolution DEM of *ILVIS1B_AQ2015_1017_R1605_056419.h5* flight line from 2015: <br>
 <p align="center">
-<img src="https://github.com/edinburgh-university-OOSA/oosa-final-assignment-pasiunaite/blob/master/media/flight_to_dem.png" alt="alt text">
+<img src="https://github.com/edinburgh-university-OOSA/oosa-final-assignment-pasiunaite/blob/master/media/flight_to_dem.png" width="25%" height="25%" alt="alt text">
 </p>
 
 ## Task 2: create gap-filled DEMs for 2009 and 2015
