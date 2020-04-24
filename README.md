@@ -35,7 +35,7 @@ python3 flight_2_dem.py --res 10
 The script processes a single LVIS flight line into a DEM. The script also has a cmd parser to change the resolution and the flight line file. It first **denoises the waveforms and identifies ground elevations** by finding the center of mass of each waveform (see illustration below). It then uses the identified elevations to **convert the point data to a raster**. The value of each pixel is taken as a mean of all points that fall within the pixel. The resulting file is then saved as a GeoTIFF. 
 
 <p align="center">
-<img src="https://github.com/edinburgh-university-OOSA/oosa-final-assignment-pasiunaite/blob/master/media/signal.png" width="40%" height="40%" alt="alt text">
+<img src="https://github.com/pasiunaite/lvis_to_dem/blob/master/media/signal.png" width="40%" height="40%" alt="alt text">
 </p>
 
 Here is a resulting 10 m resolution DEM of *ILVIS1B_AQ2015_1017_R1605_056419.h5* flight line from 2015: <br>
