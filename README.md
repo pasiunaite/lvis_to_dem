@@ -59,7 +59,7 @@ Please note that depending on the number of inputs, the script might take a coup
 ## Task 3: determine the elevation and total volume change between two DEMs
 To produce an elevation change map from 2009 to 2015:
 ```
-python3 full_dem.py --before 2009 --after 2015
+python3 elevation_change.py --before 2009 --after 2015
 ```
 The script processes two DEMs from different dates to create an elevation change map. First, it **preprocesses both input datasets to a common projection, extent and resolution**. Then it **differences** the preprocessed after and before rasters to create an elevation change map which is then saved to memory as a GeoTIFF. 
 
