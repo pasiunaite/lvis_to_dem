@@ -40,7 +40,7 @@ The script processes a single LVIS flight line into a DEM. The script also has a
 
 Here is a resulting 10 m resolution DEM of *ILVIS1B_AQ2015_1017_R1605_056419.h5* flight line from 2015: <br>
 <p align="center">
-<img src="https://github.com/edinburgh-university-OOSA/oosa-final-assignment-pasiunaite/blob/master/media/flight_to_dem.png" width="30%" height="30%" alt="alt text">
+<img src="https://github.com/pasiunaite/lvis_to_dem/blob/master/media/flight_to_dem.png" width="30%" height="30%" alt="alt text">
 </p>
 
 ## Task 2: create gap-filled DEMs for 2009 and 2015
@@ -53,7 +53,7 @@ The script processes all the flight lines that fall within the area of interest 
 Please note that depending on the number of inputs, the script might take a couple of hours to run. The resulting 100 m resolution DEMs for 2009 and 2015 are illustrated below:
 
 <p align="center">
-<img src="https://github.com/edinburgh-university-OOSA/oosa-final-assignment-pasiunaite/blob/master/media/dems.JPG" width="70%" height="70%" alt="alt text">
+<img src="https://github.com/pasiunaite/lvis_to_dem/blob/master/media/dems.JPG" width="70%" height="70%" alt="alt text">
 </p>
 
 ## Task 3: determine the elevation and total volume change between two DEMs
@@ -68,7 +68,7 @@ The script also **calculates multiple glacier volume and area change metrics**, 
 Here is the **elevation change map for Pine Island Glacier from 2009 to 2015** (100 m resolution):
 
 <p align="center">
-<img src="https://github.com/edinburgh-university-OOSA/oosa-final-assignment-pasiunaite/blob/master/media/elev_change.png" width="45%" height="45%" alt="alt text">
+<img src="https://github.com/pasiunaite/lvis_to_dem/blob/master/media/elev_change.png" width="45%" height="45%" alt="alt text">
 </p>
 
 The **change metrics computed for the Pine Island Glacier from 2009 to 2015** results:
@@ -87,6 +87,6 @@ The script creates raster contours at a user specified spacing. It iterates over
 
 Here are contours overlaid **every 50 m to 2009 and 2015 rasters** and **every 20 m to the elevation change map**:
 <p align="center">
-<img src="https://github.com/edinburgh-university-OOSA/oosa-final-assignment-pasiunaite/blob/master/media/contour.JPG" alt="alt text">
+<img src="https://github.com/pasiunaite/lvis_to_dem/blob/master/media/contour.JPG" alt="alt text">
 </p>
 
